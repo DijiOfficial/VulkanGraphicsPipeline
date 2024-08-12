@@ -21,9 +21,11 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
 
     //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
 
+    //CreateRectangle({-1.f, -1.f} , 2 , 2);
     CreateRectangle({-1.f, -1.f} , 2 , 2);
 
-    CreateCircle({0.0f, 0.0f}, 0.5f, 0.66f, 32);
+    //CreateCircle({0.0f, 0.0f}, 0.5f, 0.66f, 32);
+    CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 }
 
 void Scene::Destroy()
@@ -84,6 +86,56 @@ void Scene::CreateRectangle(float left, float bottom, float width, float height,
     mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
     mesh->AddVertex(glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f });
     mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+
+    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue);
+}
+
+void Scene::CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
+{
+    mesh->AddVertex(glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f });
+    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
+    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+
+    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
+    mesh->AddVertex(glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f });
+    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+}
+
+void Scene::CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments)
+{
+    CreateRoundedRectangle(bottomLeft.x, bottomLeft.y, size.x, size.y, radius, nrOfSegments);
+}
+
+void Scene::CreateRoundedRectangle(float left, float bottom, float width, float height, float radius, int nrOfSegments)
+{
+    const auto& mesh = AddMesh();
+
+    CreateRectangle(mesh, left + radius, bottom, width - 2 * radius, height);
+    CreateRectangle(mesh, left, bottom + radius, radius, height - 2 * radius);
+    CreateRectangle(mesh, left + width - radius, bottom + radius, radius, height - 2 * radius); 
+
+    auto createQuarterCircle = [&](const glm::vec2& center, float startAngle)
+        {
+            const float step = glm::half_pi<float>() / static_cast<float>(nrOfSegments);
+
+            for (int i = 0; i < nrOfSegments; ++i)
+            {
+                const float theta1 = startAngle + i * step;
+                const float theta2 = startAngle + (i + 1) * step;
+
+                const glm::vec2 p1 = center + glm::vec2(radius * cos(theta1), radius * sin(theta1));
+                const glm::vec2 p2 = center + glm::vec2(radius * cos(theta2), radius * sin(theta2));
+
+                mesh->AddVertex(center, { 1.0f, 0.0f, 0.0f });
+                mesh->AddVertex(p1, { 0.0f, 0.0f, 1.0f });
+                mesh->AddVertex(p2, { 0.0f, 0.0f, 1.0f });
+            }
+        };
+
+    createQuarterCircle({ left + radius, bottom + radius }, glm::pi<float>());                          // Top-left corner
+    createQuarterCircle({ left + width - radius, bottom + radius }, -glm::half_pi<float>());            // Top-right corner
+    createQuarterCircle({ left + width - radius, bottom + height - radius }, 0.0f);                     // Bottom-right corner
+    createQuarterCircle({ left + radius, bottom + height - radius }, glm::half_pi<float>());            // Bottom-left corner
 
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue);
 }

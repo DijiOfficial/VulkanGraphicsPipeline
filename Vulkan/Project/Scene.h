@@ -2,6 +2,7 @@
 #include "Singleton.h"
 #include "mesh/Mesh.h"
 
+class Mesh;
 class Scene final : public Singleton<Scene>
 {
 public:
@@ -16,8 +17,8 @@ public:
     void CreateRectangle(const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
     void CreateRectangle(float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
 
-    void CreateRoundedTriangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
-    void CreateRoundedTriangle(float left, float bottom, float width, float height, float radius, int nrOfSegments);
+    void CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
+    void CreateRoundedRectangle(float left, float bottom, float width, float height, float radius, int nrOfSegments);
     //void DrawMeshes(VkCommandBuffer const& commandBuffer, uint32_t currentFrame) const;
 
 //    static int m_AreNormalsEnabled;
@@ -29,6 +30,7 @@ public:
 //    void Init(const VkCommandPool& commandPool, const glm::mat4& projMatrix);
 
 private:
+    void CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
 //    std::vector<std::unique_ptr<Mesh3D>> m_3DMeshes;
     Mesh* AddMesh();
     std::vector<std::unique_ptr<Mesh>> m_Meshes;
