@@ -21,6 +21,14 @@ struct SwapChainSupportDetails
 class SwapChain final
 {
 public:
+	SwapChain() = default;
+	~SwapChain() noexcept = default;
+
+	SwapChain(const SwapChain& other) = delete;
+	SwapChain(SwapChain&& other) = delete;
+	SwapChain& operator=(const SwapChain& other) = delete;
+	SwapChain& operator=(SwapChain&& other) = delete;
+
 	void CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window, VkExtent2D& swapChainExtent);
 	//void CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window, const QueueFamilyIndices& indices);
 	void Destroy();
@@ -41,6 +49,14 @@ private:
 class RenderPass final 
 {
 public:
+	RenderPass() = default;
+	~RenderPass() noexcept = default;
+
+	RenderPass(const RenderPass& other) = delete;
+	RenderPass(RenderPass&& other) = delete;
+	RenderPass& operator=(const RenderPass& other) = delete;
+	RenderPass& operator=(RenderPass&& other) = delete;
+
 	void CreateFrameBuffers();
 	void CreateRenderPass(const VkSurfaceKHR& surface, GLFWwindow* window);
 	void Destroy();
