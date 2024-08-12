@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <glm/gtc/constants.hpp>
 
 void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
 {
@@ -21,6 +22,8 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
     //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
 
     CreateRectangle({-1.f, -1.f} , 2 , 2);
+
+    CreateCircle({0.0f, 0.0f}, 0.5f, 0.66f, 32);
 }
 
 void Scene::Destroy()
@@ -38,6 +41,27 @@ void Scene::DrawMeshes(const VkCommandBuffer& commandBuffer) const
 	{
 		mesh->Draw(commandBuffer);
 	}
+}
+
+void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments)
+{
+    const auto& mesh = AddMesh();
+    const float step = 2.0f * glm::pi<float>() / static_cast<float>(nrOfSegments);
+
+    for (int i = 0; i < nrOfSegments; ++i)
+    {
+        const float theta1 = i * step;
+        const float theta2 = (i + 1) * step;
+
+        const glm::vec2 p1 = center + glm::vec2(r1 * cos(theta1), r2 * sin(theta1));
+        const glm::vec2 p2 = center + glm::vec2(r1 * cos(theta2), r2 * sin(theta2));
+
+        mesh->AddVertex(center, { 1.0f, 1.0f, 1.0f });
+        mesh->AddVertex(p1, { 1.0f, 0.0f, 0.0f });
+        mesh->AddVertex(p2, { 1.0f, 0.0f, 0.0f });
+    }
+
+    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue);
 }
 
 void Scene::CreateRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color)
