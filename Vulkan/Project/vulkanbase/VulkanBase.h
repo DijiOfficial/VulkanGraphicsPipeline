@@ -14,9 +14,11 @@
 #include "mesh/Vertex.h"
 #include "VertexBuffer.h"
 #include "Scene.h"
+#include "RenderPass.h"
+#include "GraphicsPipeline.h"
 
 #include <iostream>
-#include <stdexcept>
+//#include <stdexcept>
 #include <vector>
 #include <cstring>
 #include <cstdlib>
@@ -32,12 +34,6 @@ const std::vector<const char*> validationLayers = {
 
 const std::vector<const char*> deviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-
-struct SwapChainSupportDetails {
-	VkSurfaceCapabilitiesKHR capabilities;
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
 };
 
 class VulkanBase {
@@ -64,14 +60,18 @@ private:
 		createLogicalDevice();
 
 		// week 04 
-		createSwapChain();
-		createImageViews();
-		
+		//createSwapChain();
+		//createImageViews();//to replace yet
+		//swapChain and Image view handled by RenderPass
+		// 
 		// week 03
 		m_GradientShader.Initialize();
-		createRenderPass();
-		createGraphicsPipeline();
-		createFrameBuffers();
+		m_RenderPass.CreateRenderPass(surface, window);
+		m_GraphicsPipeline.CreateGraphicsPipeline(m_GradientShader, m_RenderPass.GetRenderPass());
+		m_RenderPass.CreateFrameBuffers();
+		//createRenderPass();
+		//createGraphicsPipeline();
+		//createFrameBuffers();
 
 		// week 02
 		m_CommandPool.Init(surface);
@@ -103,22 +103,12 @@ private:
 		m_CommandPool.DestroyCommandPool();
 		Scene::GetInstance().Destroy();
 
-		for (auto framebuffer : swapChainFramebuffers) {
-			vkDestroyFramebuffer(device, framebuffer, nullptr);
-		}
-
-		vkDestroyPipeline(device, graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-		vkDestroyRenderPass(device, renderPass, nullptr);
-
-		for (auto imageView : swapChainImageViews) {
-			vkDestroyImageView(device, imageView, nullptr);
-		}
+		m_GraphicsPipeline.Destroy();
+		m_RenderPass.Destroy();
 
 		if (enableValidationLayers) {
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
-		vkDestroySwapchainKHR(device, swapChain, nullptr);
 		vkDestroyDevice(device, nullptr);
 
 		vkDestroySurfaceKHR(instance, surface, nullptr);
@@ -154,31 +144,25 @@ private:
 	// Renderpass concept
 	// Graphics pipeline
 	
-	std::vector<VkFramebuffer> swapChainFramebuffers;
-	VkPipelineLayout pipelineLayout;
-	VkPipeline graphicsPipeline;
-	VkRenderPass renderPass;
-
-	void createFrameBuffers();
-	void createRenderPass();
-	void createGraphicsPipeline();
+	
+	
+	RenderPass m_RenderPass{};
+	GraphicsPipeline m_GraphicsPipeline{};
+	//void createFrameBuffers();
+	//void createRenderPass();
+	//void createGraphicsPipeline();
 
 	// Week 04
 	// Swap chain and image view support
 
-	VkSwapchainKHR swapChain;
-	std::vector<VkImage> swapChainImages;
-	VkFormat swapChainImageFormat;
-	VkExtent2D swapChainExtent;
+	//VkSwapchainKHR swapChain;
 
-	std::vector<VkImageView> swapChainImageViews;
-
-	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-	void createSwapChain();
-	void createImageViews();
+	//SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+	//VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+	//VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+	//VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	//void createSwapChain();
+	//void createImageViews();
 
 	// Week 05 
 	// Logical and physical device

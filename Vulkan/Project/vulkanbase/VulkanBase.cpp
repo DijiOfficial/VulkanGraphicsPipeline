@@ -14,11 +14,13 @@ void VulkanBase::InitWindow()
 void VulkanBase::DrawFrame(uint32_t imageIndex)
 {
 	const VkCommandBuffer& commandBuffer = m_CommandBuffer.GetVkCommandBuffer();
+	const auto& swapChainExtent = m_RenderPass.GetSwapChainExtent();
 
 	VkRenderPassBeginInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = renderPass;
-	renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
+	renderPassInfo.renderPass = m_RenderPass.GetRenderPass();
+	renderPassInfo.framebuffer = m_RenderPass.GetSwapChainFramebuffers()[imageIndex];
+	//renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = swapChainExtent;
 
@@ -42,7 +44,7 @@ void VulkanBase::DrawFrame(uint32_t imageIndex)
 	scissor.extent = swapChainExtent;
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline.GetGraphicsPipeline());
 
 	Scene::GetInstance().DrawMeshes(commandBuffer);
 
