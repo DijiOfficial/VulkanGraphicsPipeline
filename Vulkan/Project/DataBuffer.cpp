@@ -1,18 +1,18 @@
-#include "VertexBuffer.h"
+#include "DataBuffer.h"
 #include <vulkanbase/VulkanBase.h>
 
-VertexBuffer::VertexBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data)
+DataBuffer::DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
-	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, properties, stagingBuffer, stagingBufferMemory);
 
 	void* tempData;
 	vkMapMemory(VulkanBase::device, stagingBufferMemory, 0, size, 0, &tempData);
 	memcpy(tempData, data, (size_t)size);
 	vkUnmapMemory(VulkanBase::device, stagingBufferMemory);
 
-	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VertexBuffer, m_VertexBufferMemory);
+	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VertexBuffer, m_VertexBufferMemory);
 
 	CopyBuffer(commandPool, graphicsQueue, stagingBuffer, m_VertexBuffer, size);
 
@@ -20,30 +20,13 @@ VertexBuffer::VertexBuffer(const VkCommandPool& commandPool, const VkQueue& grap
 	vkFreeMemory(VulkanBase::device, stagingBufferMemory, nullptr);
 }
 
-//void VertexBuffer::CreateVertexBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data)
-//{
-//	VkBuffer stagingBuffer;
-//	VkDeviceMemory stagingBufferMemory;
-//	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-//
-//	void* tempData;
-//	vkMapMemory(VulkanBase::device, stagingBufferMemory, 0, size, 0, &tempData);
-//	memcpy(tempData, data, (size_t)size);
-//	vkUnmapMemory(VulkanBase::device, stagingBufferMemory);
-//
-//	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VertexBuffer, m_VertexBufferMemory);
-//
-//	CopyBuffer(commandPool, graphicsQueue, stagingBuffer, m_VertexBuffer, size);
-//
-//}
-
-void VertexBuffer::Destroy() const
+void DataBuffer::Destroy() const
 {
 	vkDestroyBuffer(VulkanBase::device, m_VertexBuffer, nullptr);
 	vkFreeMemory(VulkanBase::device, m_VertexBufferMemory, nullptr);
 }
 
-void VertexBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+void DataBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 {
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -72,7 +55,7 @@ void VertexBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 	vkBindBufferMemory(VulkanBase::device, buffer, bufferMemory, 0);
 }
 
-void VertexBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& graphicsQueue, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+void DataBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& graphicsQueue, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
 	CommandBuffer commandBufferClass{ commandPool };
 
@@ -99,7 +82,7 @@ void VertexBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& g
 	commandBufferClass.Destroy(commandPool);
 }
 
-uint32_t VertexBuffer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+uint32_t DataBuffer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
 	vkGetPhysicalDeviceMemoryProperties(VulkanBase::physicalDevice, &memProperties);

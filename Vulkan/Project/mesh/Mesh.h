@@ -7,7 +7,7 @@
 //#include "DescriptorPool.h"
 //#include "DataBuffer.h"
 #include "Vertex.h"
-#include "VertexBuffer.h"
+#include "DataBuffer.h"
 
 class Mesh
 {
@@ -38,7 +38,7 @@ public:
 
 private:
     bool m_IsAllocated = false;
-    std::unique_ptr<VertexBuffer> m_VertexBuffer{};
+    std::unique_ptr<DataBuffer> m_VertexBuffer{};
     //std::unique_ptr<DataBuffer> m_IndexBuffer{};
     std::vector<Vertex2D> m_Vertices = {};
     //std::vector<uint32_t> m_Indices = {};

@@ -1,10 +1,9 @@
 #include "Mesh.h"
 
 Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const std::vector<Vertex2D>& vertices)
-	: m_IsAllocated{ true }
-	, m_Vertices(vertices)
+	: m_Vertices{ vertices }
 {
-	m_VertexBuffer = std::make_unique<VertexBuffer>(commandPool, graphicsQueue, m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data());
+	AllocateBuffer(commandPool, graphicsQueue);
 }
 
 void Mesh::Destroy()
@@ -55,7 +54,11 @@ void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graph
 {
 	if (!m_IsAllocated)
 	{
-		m_VertexBuffer = std::make_unique<VertexBuffer>(commandPool, graphicsQueue, m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data());
+		const VkDeviceSize size = m_Vertices.size() * sizeof(m_Vertices[0]);
+		const VkBufferUsageFlags usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		const VkMemoryPropertyFlags properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+		m_VertexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, size, m_Vertices.data(), usage, properties);
 		m_IsAllocated = true;
 	}
 }
