@@ -19,6 +19,8 @@ void Mesh::Destroy()
 
 void Mesh::Draw(const VkCommandBuffer& commandBuffer) const
 {
+	if (!m_IsAllocated) return;
+
 	VkBuffer vertexBuffers[] = { m_VertexBuffer->GetVertexBuffer() };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
