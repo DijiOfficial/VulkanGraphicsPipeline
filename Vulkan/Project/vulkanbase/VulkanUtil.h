@@ -11,6 +11,7 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
+constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 3;
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
