@@ -7,8 +7,8 @@
 
 struct Vertex2D
 {
-	glm::vec2 m_Pos;
-	glm::vec3 m_Color;
+	alignas(16) glm::vec2 m_Pos;
+	alignas(16) glm::vec3 m_Color;
 
 	static VkVertexInputBindingDescription GetBindingDescription()
 	{
