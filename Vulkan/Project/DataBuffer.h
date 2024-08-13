@@ -5,7 +5,7 @@ class DataBuffer final
 {
 public:
 	DataBuffer() = default;
-	explicit DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
+	explicit DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data, VkBufferUsageFlags usage);
 	~DataBuffer() noexcept = default;
 
 	void Destroy() const;
@@ -15,12 +15,12 @@ public:
 	DataBuffer& operator=(const DataBuffer& other) = delete;
 	DataBuffer& operator=(DataBuffer&& other) = delete;
 
-	VkBuffer GetVertexBuffer() const { return m_VertexBuffer; };
+	VkBuffer GetDataBuffer() const { return m_DataBuffer; };
 	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
 private:
-	VkBuffer m_VertexBuffer;
-	VkDeviceMemory m_VertexBufferMemory;
+	VkBuffer m_DataBuffer;
+	VkDeviceMemory m_DataBufferMemory;
 
 	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void CopyBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);

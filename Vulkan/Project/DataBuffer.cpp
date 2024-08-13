@@ -1,20 +1,20 @@
 #include "DataBuffer.h"
 #include <vulkanbase/VulkanBase.h>
 
-DataBuffer::DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
+DataBuffer::DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDeviceSize& size, const void* data, VkBufferUsageFlags usage)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
-	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, properties, stagingBuffer, stagingBufferMemory);
+	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
 	void* tempData;
 	vkMapMemory(VulkanBase::device, stagingBufferMemory, 0, size, 0, &tempData);
 	memcpy(tempData, data, (size_t)size);
 	vkUnmapMemory(VulkanBase::device, stagingBufferMemory);
 
-	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VertexBuffer, m_VertexBufferMemory);
+	CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_DataBuffer, m_DataBufferMemory);
 
-	CopyBuffer(commandPool, graphicsQueue, stagingBuffer, m_VertexBuffer, size);
+	CopyBuffer(commandPool, graphicsQueue, stagingBuffer, m_DataBuffer, size);
 
 	vkDestroyBuffer(VulkanBase::device, stagingBuffer, nullptr);
 	vkFreeMemory(VulkanBase::device, stagingBufferMemory, nullptr);
@@ -22,8 +22,8 @@ DataBuffer::DataBuffer(const VkCommandPool& commandPool, const VkQueue& graphics
 
 void DataBuffer::Destroy() const
 {
-	vkDestroyBuffer(VulkanBase::device, m_VertexBuffer, nullptr);
-	vkFreeMemory(VulkanBase::device, m_VertexBufferMemory, nullptr);
+	vkDestroyBuffer(VulkanBase::device, m_DataBuffer, nullptr);
+	vkFreeMemory(VulkanBase::device, m_DataBufferMemory, nullptr);
 }
 
 void DataBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
