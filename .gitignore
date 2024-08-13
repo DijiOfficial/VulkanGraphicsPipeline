@@ -407,3 +407,5 @@ imgui.ini
 
 \*cmake-tools\*
 compile_commands.json
+/Vulkan/Project/shaders/3Dshader.frag
+/Vulkan/Project/shaders/3Dshader.vert

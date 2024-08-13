@@ -18,14 +18,15 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //    mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
     //}
 
-    const std::vector<Vertex2D> vertices = 
-    {
-        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    const std::vector<Vertex3D> vertices = {
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 
     //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
+    //m_Meshes.push_back(std::make_unique<Mesh3D>(vertices));
 
     //CreateRectangle({-1.f, -1.f} , 2 , 2);
     CreateRectangle({-1.f, -1.f} , 2 , 2);

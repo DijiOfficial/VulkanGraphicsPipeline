@@ -80,3 +80,25 @@ void Mesh::BindBuffers(const VkCommandBuffer& commandBuffer) const
 	vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->GetDataBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 }
+
+
+Mesh3D::Mesh3D(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex3D>& vertices)
+	: m_Vertices{ vertices }
+{
+	AllocateBuffer(commandPool, graphicsQueue, descriptorSetLayout);
+}
+
+void Mesh3D::AddVertex(const glm::vec3& pos, const glm::vec3& color)
+{
+	AddVertex(Vertex3D{ pos, color });
+}
+
+void Mesh3D::AddVertex(const Vertex3D& vertex)
+{
+	if (m_VertexIndexUMap.count(vertex) == 0)
+	{
+		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size());
+		m_Vertices.push_back(vertex);
+	}
+	m_Indices.push_back(m_VertexIndexUMap[vertex]);
+}

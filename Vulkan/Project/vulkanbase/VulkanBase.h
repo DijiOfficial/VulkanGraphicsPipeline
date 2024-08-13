@@ -130,6 +130,7 @@ private:
 	}
 
 	VulkanShader m_GradientShader{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
+	//VulkanShader m_GradientShader{ "shaders/3Dshader.vert.spv", "shaders/shader.frag.spv" };
 
 	GLFWwindow* window;
 	void InitWindow();
