@@ -1,6 +1,6 @@
 #include "vulkanbase/VulkanBase.h"
 //temp for vertcies
-#include "mesh/Vertex.h"
+#include "mesh/Utils.h"
 #include "Scene.h"
 
 void VulkanBase::InitWindow()

@@ -1,7 +1,7 @@
 #include "vulkan_shader.h"
 #include "vulkanbase/VulkanUtil.h"
 #include <vulkanbase/VulkanBase.h>
-#include "mesh/Vertex.h"
+#include "mesh/Utils.h"
 
 void VulkanShader::Initialize()
 {

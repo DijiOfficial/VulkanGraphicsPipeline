@@ -10,7 +10,9 @@ void Mesh::Destroy()
 {
 	if (m_IsAllocated)
 	{
+		m_IndexBuffer->Destroy();
 		m_VertexBuffer->Destroy();
+		m_IndexBuffer.reset();
 		m_VertexBuffer.reset();
 		m_IsAllocated = false;
 	}

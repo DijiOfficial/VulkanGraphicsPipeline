@@ -11,7 +11,7 @@
 
 #include "CommandBuffer.h"
 #include "CommandPool.h"
-#include "mesh/Vertex.h"
+#include "mesh/Utils.h"
 #include "DataBuffer.h"
 #include "Scene.h"
 #include "RenderPass.h"
