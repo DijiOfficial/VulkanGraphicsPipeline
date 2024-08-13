@@ -3,26 +3,12 @@
 #include <glm/glm.hpp>
 #include <array>
 #include <vector>
+#include <glm/gtx/hash.hpp>
 
 struct Vertex2D
 {
 	glm::vec2 m_Pos;
 	glm::vec3 m_Color;
-
-	//static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
-	//{
-	//	static auto bindingDescription = Vertex2D::GetBindingDescription();
-	//	static auto attributeDescriptions = Vertex2D::GetAttributeDescriptions();
-
-	//	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-	//	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	//	vertexInputInfo.vertexBindingDescriptionCount = 1;
-	//	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-	//	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-	//	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-
-	//	return vertexInputInfo;
-	//}
 
 	static VkVertexInputBindingDescription GetBindingDescription()
 	{
@@ -57,3 +43,14 @@ struct Vertex2D
 	}
 
 };
+
+namespace std {
+	template<> struct hash<Vertex2D>
+	{
+		size_t operator()(Vertex2D const& vertex) const
+		{
+			return ((hash<glm::vec2>()(vertex.m_Pos) ^
+				(hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1);
+		}
+	};
+}
