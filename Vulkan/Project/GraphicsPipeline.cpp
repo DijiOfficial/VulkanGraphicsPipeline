@@ -19,7 +19,8 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 	rasterizer.lineWidth = 1.0f;
 	//rasterizer.cullMode = VK_CULL_MODE_NONE;
 	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	//rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -51,24 +52,28 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 	dynamicState.pDynamicStates = dynamicStates.data();
 
+	//can seperate pipleline layout creation
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 0;
-	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &shader.GetDescriptorSetLayout();
+	//pipelineLayoutInfo.pushConstantRangeCount = 0;
+	//pipelineLayoutInfo.pushConstantRangeCount = 1; // Number of push constant ranges
+	//pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Array of push constant ranges
 
 	if (vkCreatePipelineLayout(VulkanBase::device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
+	//end layout creation
+
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
 	pipelineInfo.pStages = shader.GetShaderStages().data();
-	//temp
 	pipelineInfo.pVertexInputState = &shader.CreateVertexInputStateInfo();
-	//pipelineInfo.pVertexInputState = &Vertex2D::CreateVertexInputStateInfo();
 	pipelineInfo.pInputAssemblyState = &shader.CreateInputAssemblyStateInfo();
 
 	pipelineInfo.pViewportState = &viewportState;
@@ -86,7 +91,7 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	shader.DestroyShaderModules();
+	shader.Destroy();
 }
 
 void GraphicsPipeline::Destroy()

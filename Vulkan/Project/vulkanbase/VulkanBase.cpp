@@ -46,7 +46,7 @@ void VulkanBase::DrawFrame(uint32_t imageIndex)
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline.GetGraphicsPipeline());
 
-	Scene::GetInstance().DrawMeshes(commandBuffer);
+	Scene::GetInstance().DrawMeshes(commandBuffer, m_GraphicsPipeline.GetPipelineLayout(), imageIndex);
 
 	vkCmdEndRenderPass(commandBuffer);
 }

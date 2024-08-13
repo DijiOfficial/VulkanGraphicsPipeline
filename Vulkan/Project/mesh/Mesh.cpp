@@ -1,9 +1,10 @@
 #include "Mesh.h"
+#include "GraphicsPipeline.h"
 
-Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const std::vector<Vertex2D>& vertices)
+Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices)
 	: m_Vertices{ vertices }
 {
-	AllocateBuffer(commandPool, graphicsQueue);
+	AllocateBuffer(commandPool, graphicsQueue, descriptorSetLayout);
 }
 
 void Mesh::Destroy()
@@ -14,16 +15,25 @@ void Mesh::Destroy()
 		m_VertexBuffer->Destroy();
 		m_IndexBuffer.reset();
 		m_VertexBuffer.reset();
+
+		m_DescriptorPool.Destroy();
+
 		m_IsAllocated = false;
 	}
 }
 
-void Mesh::Draw(const VkCommandBuffer& commandBuffer) const
+void Mesh::Update(uint32_t currentFrame, UniformBufferObject ubo)
+{
+	m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
+}
+
+void Mesh::Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
 {
 	if (!m_IsAllocated) return;
 
 	BindBuffers(commandBuffer);
 
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_DescriptorPool.GetDescriptorSets(currentFrame), 0, nullptr);
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 }
 
@@ -42,7 +52,7 @@ void Mesh::AddVertex(const Vertex2D& vertex)
 	m_Indices.push_back(m_VertexIndexUMap[vertex]);
 }
 
-void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
+void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
 {
 	if (!m_IsAllocated)
 	{
@@ -54,6 +64,8 @@ void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graph
 
 		m_VertexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, size, m_Vertices.data(), usage);
 		m_IndexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, Isize, m_Indices.data(), Iusage);
+
+		m_DescriptorPool.Initialize(commandPool, graphicsQueue, descriptorSetLayout);
 
 		m_IsAllocated = true;
 	}

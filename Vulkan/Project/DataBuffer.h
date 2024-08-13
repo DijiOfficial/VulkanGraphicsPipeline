@@ -15,13 +15,14 @@ public:
 	DataBuffer& operator=(const DataBuffer& other) = delete;
 	DataBuffer& operator=(DataBuffer&& other) = delete;
 
-	VkBuffer GetDataBuffer() const { return m_DataBuffer; };
-	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	VkBuffer& GetDataBuffer()  { return m_DataBuffer; };
+	VkDeviceMemory& GetDataBufferMemory()  { return m_DataBufferMemory; };
+	static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
 private:
 	VkBuffer m_DataBuffer;
 	VkDeviceMemory m_DataBufferMemory;
 
-	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void CopyBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 };

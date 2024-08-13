@@ -52,7 +52,9 @@ void VulkanBase::drawFrame() {
 	//vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), GraphicsPipeline::GetPipelineLayout(),
 	//	VK_SHADER_STAGE_FRAGMENT_BIT,
 	//	sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_ShadingMode);
+	
 	//m_Level.Update(imageIndex, m_Camera.m_ViewMatrix);
+	Scene::GetInstance().Update(imageIndex);
 
 	DrawFrame(imageIndex);
 	m_CommandBuffer.EndFrame();

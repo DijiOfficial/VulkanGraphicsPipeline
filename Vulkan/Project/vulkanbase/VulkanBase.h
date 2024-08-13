@@ -63,7 +63,9 @@ private:
 		//createSwapChain();
 		//createImageViews();//to replace yet
 		//swapChain and Image view handled by RenderPass
-		// 
+		
+		
+
 		// week 03
 		m_GradientShader.Initialize();
 		m_RenderPass.CreateRenderPass(surface, window);
@@ -72,6 +74,7 @@ private:
 		//createRenderPass();
 		//createGraphicsPipeline();
 		//createFrameBuffers();
+		//CreateUniformBuffers();
 
 		// week 02
 		m_CommandPool.Init(surface);
@@ -79,7 +82,7 @@ private:
 		//m_VertexBuffer.CreateVertexBuffer();
 
 		m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
-		Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), graphicsQueue);
+		Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), graphicsQueue, m_GradientShader.GetDescriptorSetLayout(), m_RenderPass.GetAspectRatio());
 
 		// week 06
 		createSyncObjects();
@@ -104,6 +107,8 @@ private:
 		Scene::GetInstance().Destroy();
 
 		m_GraphicsPipeline.Destroy();
+
+		m_GradientShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
 		m_RenderPass.Destroy();
 
 		if (enableValidationLayers) {
@@ -154,7 +159,42 @@ private:
 
 	// Week 04
 	// Swap chain and image view support
+	//add to DataBuffer and remove static
+	//std::vector<VkBuffer> uniformBuffers;
+	//std::vector<VkDeviceMemory> uniformBuffersMemory;
+	//std::vector<void*> uniformBuffersMapped;
+	//UniformBufferObject ubo{};
 
+	//void CreateUniformBuffers()
+	//{
+	//	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+	//	uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+	//	uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+	//	uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
+
+	//	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	//	{
+	//		//DataBuffer::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+
+	//		vkMapMemory(device, uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
+	//	}
+	//}
+
+	//void updateUniformBuffer(uint32_t currentFrame)
+	//{
+	//	static auto startTime = std::chrono::high_resolution_clock::now();
+
+	//	auto currentTime = std::chrono::high_resolution_clock::now();
+	//	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+	//	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//	ubo.proj = glm::perspective(glm::radians(45.0f),  m_RenderPass.GetAspectRatio(), 0.1f, 10.0f);
+	//	ubo.proj[1][1] *= -1;
+
+	//	memcpy(uniformBuffersMapped[currentFrame], &ubo, sizeof(ubo));
+
+	//}
 	//VkSwapchainKHR swapChain;
 
 	//SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);

@@ -19,13 +19,16 @@ public:
 	VulkanShader& operator=(VulkanShader&& other) = delete;
 
 	void Initialize();
-	void DestroyShaderModules();
+	void Destroy();
+	void DestoryDescriptorSetLayout();
 
 	std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() { return m_ShaderStages; };
+	const VkDescriptorSetLayout& GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
 
 	//temp to remove
 	static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo();
 	VkPipelineInputAssemblyStateCreateInfo CreateInputAssemblyStateInfo();
+
 
 private:
 	std::string m_VertexShaderFile;
@@ -33,6 +36,9 @@ private:
 
 	std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
 
+	VkDescriptorSetLayout m_DescriptorSetLayout;
+
 	VkPipelineShaderStageCreateInfo CreateShaderInfo(bool isFragment);
 	VkShaderModule CreateShaderModule(const std::vector<char>& code);
+	void CreateDescriptorSetLayout();
 };
