@@ -20,11 +20,9 @@ void Mesh::Draw(const VkCommandBuffer& commandBuffer) const
 {
 	if (!m_IsAllocated) return;
 
-	VkBuffer vertexBuffers[] = { m_VertexBuffer->GetVertexBuffer() };
-	VkDeviceSize offsets[] = { 0 };
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+	BindBuffers(commandBuffer);
 
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(m_Vertices.size()), 1, 0, 0);
+	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 }
 
 void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
@@ -34,20 +32,12 @@ void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
 
 void Mesh::AddVertex(const Vertex2D& vertex)
 {
-	auto it = std::find(m_Vertices.begin(), m_Vertices.end(), vertex);
-	
-	m_Vertices.push_back(vertex);
-
-	//if (it == m_Vertices.end())
-	//{
-	//	m_Vertices.push_back(vertex);
-	////	m_Indices.push_back(static_cast<uint32_t>(m_Vertices.size() - 1));
-	//}
-	//else
-	//{
-	//	// Vertex is found, use the existing index
-	//	m_Indices.push_back(static_cast<uint32_t>(std::distance(m_Vertices.begin(), it)));
-	//}
+	if (m_VertexIndexUMap.count(vertex) == 0)
+	{
+		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size());
+		m_Vertices.push_back(vertex);
+	}
+	m_Indices.push_back(m_VertexIndexUMap[vertex]);
 }
 
 void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
@@ -56,9 +46,23 @@ void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graph
 	{
 		const VkDeviceSize size = m_Vertices.size() * sizeof(m_Vertices[0]);
 		const VkBufferUsageFlags usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		const VkMemoryPropertyFlags properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-		m_VertexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, size, m_Vertices.data(), usage, properties);
+		const VkDeviceSize Isize = m_Indices.size() * sizeof(m_Indices[0]);
+		const VkBufferUsageFlags Iusage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+
+		m_VertexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, size, m_Vertices.data(), usage);
+		m_IndexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, Isize, m_Indices.data(), Iusage);
+
 		m_IsAllocated = true;
 	}
+}
+
+void Mesh::BindBuffers(const VkCommandBuffer& commandBuffer) const
+{
+	VkBuffer vertexBuffers[] = { m_VertexBuffer->GetDataBuffer() };
+	VkDeviceSize offsets[] = { 0 };
+
+	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->GetDataBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
 }

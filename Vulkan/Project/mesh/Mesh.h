@@ -8,6 +8,7 @@
 //#include "DataBuffer.h"
 #include "Vertex.h"
 #include "DataBuffer.h"
+#include <unordered_map>
 
 class Mesh
 {
@@ -35,11 +36,13 @@ public:
     void AddVertex(const glm::vec2& pos, const glm::vec3& color = { 1, 1, 1 });
     void AddVertex(const Vertex2D& vertex);
     void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue);
+    void BindBuffers(const VkCommandBuffer& commandBuffer) const;
 
 private:
     bool m_IsAllocated = false;
     std::unique_ptr<DataBuffer> m_VertexBuffer{};
-    //std::unique_ptr<DataBuffer> m_IndexBuffer{};
+    std::unique_ptr<DataBuffer> m_IndexBuffer{};
+    std::unordered_map<Vertex2D, uint32_t> m_VertexIndexUMap{};
     std::vector<Vertex2D> m_Vertices = {};
-    //std::vector<uint32_t> m_Indices = {};
+    std::vector<uint32_t> m_Indices = {};
 };
