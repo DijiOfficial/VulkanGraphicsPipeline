@@ -8,12 +8,27 @@
 struct Vertex3D
 {
     alignas(16) glm::vec3 m_Pos{};
-    //alignas(16) glm::vec3 m_Normal{};
     alignas(16) glm::vec3 m_Color{ 1,1,1 };
-    alignas(16) glm::vec2 m_TexCoord;
+    alignas(16) glm::vec2 m_TexCoord{ -1.0f, -1.0f };
+    //alignas(16) glm::vec3 m_Normal{};
     //alignas(16) glm::vec3 m_Tangent{};
 
-    static VkVertexInputBindingDescription getBindingDescription()
+    static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
+    {
+        static auto bindingDescription = Vertex3D::GetBindingDescription();
+        static auto attributeDescriptions = Vertex3D::GetAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+        return vertexInputInfo;
+    }
+
+    static VkVertexInputBindingDescription GetBindingDescription()
     {
 
         VkVertexInputBindingDescription bindingDescription{};
@@ -24,13 +39,13 @@ struct Vertex3D
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
+    static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
     {
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[0].offset = offsetof(Vertex3D, m_Pos);
 
         attributeDescriptions[1].binding = 0;
@@ -90,7 +105,7 @@ struct Vertex2D
 {
 	alignas(16) glm::vec2 m_Pos;
 	alignas(16) glm::vec3 m_Color;
-    alignas(16) glm::vec2 m_TexCoord;
+    alignas(16) glm::vec2 m_TexCoord{ -1.0f, -1.0f };
 
 	static VkVertexInputBindingDescription GetBindingDescription()
 	{
@@ -101,6 +116,21 @@ struct Vertex2D
 
 		return bindingDescription;
 	}
+
+    static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
+    {
+        static auto bindingDescription = Vertex2D::GetBindingDescription();
+        static auto attributeDescriptions = Vertex2D::GetAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+        return vertexInputInfo;
+    }
 
 	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
 	{

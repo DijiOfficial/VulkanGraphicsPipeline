@@ -17,12 +17,23 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //    mesh->MapBuffers();
     //    mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
     //}
+    //CreateRectangle({-1.f, -1.f} , 2 , 2);
 
     const std::vector<Vertex3D> vertices = {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+    {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+    };
+
+    const std::vector<uint32_t> indices = {
+    0, 1, 2, 2, 3, 0,
+    4, 5, 6, 6, 7, 4
     };
 
     const std::vector<Vertex2D> vertices2 = {
@@ -31,39 +42,44 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
         {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
         {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
     };
-    const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
+    const std::vector<uint32_t> indices2 = { 0, 1, 2, 2, 3, 0 };
 
-    //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
-    m_Meshes.push_back(std::make_unique<Mesh>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices));
+    m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices2));
+    m_Meshes3D.push_back(std::make_unique<Mesh<Vertex3D>>(commandPool, graphicsQueue, m_3DDescriptorSetLayout, vertices, indices));
 
-    // this won't work unless I give it a TexCoord or give it a different shader/mesh
-    //CreateRectangle({-1.f, -1.f} , 2 , 2);
-    //CreateRectangle({-1.f, -1.f} , 2 , 2);
-
-    //CreateCircle({0.0f, 0.0f}, 0.5f, 0.66f, 32);
+    //CreateCircle({0.0f, 0.0f}, 0.5f, 0.5f, 32);
     //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 }
 
 void Scene::Destroy()
 {
-	for (auto& mesh : m_Meshes)
+	for (auto& mesh : m_Meshes2D)
 	{
 		mesh->Destroy();
 	}
-    m_Meshes.clear();
+    m_Meshes2D.clear();
+
+    for (auto& mesh : m_Meshes3D)
+    {
+        mesh->Destroy();
+    }
+    m_Meshes3D.clear();
 }
 
-void Scene::DrawMeshes(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
+void Scene::Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
 {
-	for (const auto& mesh : m_Meshes)
+    for (const auto& mesh : m_Meshes2D)
+    {
+        mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
+    }
+}
+
+void Scene::Draw3DMeshes(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
+{
+	for (const auto& mesh : m_Meshes3D)
 	{
 		mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
 	}
-
-    //for (const auto& mesh : m_3DMeshes)
-    //{
-    //    mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
-    //}
 }
 
 void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments)
@@ -79,9 +95,9 @@ void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSe
         const glm::vec2 p1 = center + glm::vec2(r1 * cos(theta1), r2 * sin(theta1));
         const glm::vec2 p2 = center + glm::vec2(r1 * cos(theta2), r2 * sin(theta2));
 
-        mesh->AddVertex(center, { 1.0f, 1.0f, 1.0f });
-        mesh->AddVertex(p1, { 1.0f, 0.0f, 0.0f });
-        mesh->AddVertex(p2, { 1.0f, 0.0f, 0.0f });
+        mesh->AddVertex(Vertex2D{ center, { 1.0f, 1.0f, 1.0f } });
+        mesh->AddVertex(Vertex2D{ p1, { 1.0f, 0.0f, 0.0f } });
+        mesh->AddVertex(Vertex2D{ p2, { 1.0f, 0.0f, 0.0f } });
     }
 
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
@@ -100,26 +116,26 @@ void Scene::CreateRectangle(const glm::vec2& bottomLeft, float width, float heig
 void Scene::CreateRectangle(float left, float bottom, float width, float height, const glm::vec3& color)
 {
     const auto& mesh = AddMesh();
-    mesh->AddVertex(glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
 
-    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
 
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 }
 
-void Scene::CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
+void Scene::CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
 {
-    mesh->AddVertex(glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
 
-    mesh->AddVertex(glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f });
-    mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
 }
 
 void Scene::CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments)
@@ -147,9 +163,9 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
                 const glm::vec2 p1 = center + glm::vec2(radius * cos(theta1), radius * sin(theta1));
                 const glm::vec2 p2 = center + glm::vec2(radius * cos(theta2), radius * sin(theta2));
 
-                mesh->AddVertex(center, { 1.0f, 0.0f, 0.0f });
-                mesh->AddVertex(p1, { 0.0f, 0.0f, 1.0f });
-                mesh->AddVertex(p2, { 0.0f, 0.0f, 1.0f });
+                mesh->AddVertex(Vertex2D{ center, { 1.0f, 0.0f, 0.0f } });
+                mesh->AddVertex(Vertex2D{ p1, { 0.0f, 0.0f, 1.0f } });
+                mesh->AddVertex(Vertex2D{ p2, { 0.0f, 0.0f, 1.0f } });
             }
         };
 
@@ -163,19 +179,19 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
 
 void Scene::Update(uint32_t currentFrame)
 {
-    for (auto& mesh : m_Meshes)
+    for (auto& mesh : m_Meshes2D)
     {
         mesh->Update(currentFrame, m_Ubo);
     }
 
- //   for (auto& mesh : m_3DMeshes)
- //   {
- //       mesh->Update(currentFrame, m_Ubo);
-	//}
+    for (auto& mesh : m_Meshes3D)
+    {
+        mesh->Update(currentFrame, m_Ubo);
+	}
 }
 
-Mesh* Scene::AddMesh()
+Mesh<Vertex2D>* Scene::AddMesh()
 {
-    m_Meshes.push_back(std::make_unique<Mesh>());
-    return m_Meshes.back().get();
+    m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>());
+    return m_Meshes2D.back().get();
 }

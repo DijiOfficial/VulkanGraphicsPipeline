@@ -13,7 +13,7 @@ public:
     GraphicsPipeline& operator=(const GraphicsPipeline& other) = delete;
     GraphicsPipeline& operator=(GraphicsPipeline&& other) = delete;
 
-    void CreateGraphicsPipeline(VulkanShader& shader, const VkRenderPass& renderPass);
+    void CreateGraphicsPipeline(VulkanShader& shader, const VkRenderPass& renderPass, const VkPipelineVertexInputStateCreateInfo& pipelineVertexInputStateCreateInfo);
     void Destroy();
 
     VkPipeline& GetGraphicsPipeline() { return m_GraphicsPipeline; }

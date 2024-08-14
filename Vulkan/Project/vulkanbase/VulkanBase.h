@@ -9,13 +9,13 @@
 #include "VulkanUtil.h"
 #include "shaders/vulkan_shader.h"
 
-#include "CommandBuffer.h"
-#include "CommandPool.h"
+#include "abstractions/CommandBuffer.h"
+#include "abstractions/CommandPool.h"
 #include "mesh/Utils.h"
-#include "DataBuffer.h"
+#include "abstractions/DataBuffer.h"
 #include "Scene.h"
-#include "RenderPass.h"
-#include "GraphicsPipeline.h"
+#include "abstractions/RenderPass.h"
+#include "abstractions/GraphicsPipeline.h"
 
 #include <iostream>
 //#include <stdexcept>
@@ -30,6 +30,7 @@
 
 //temp
 #include "textures/Textures.h"
+#include "abstractions/DepthBuffer.h"
 
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
@@ -70,8 +71,12 @@ private:
 		
 		// week 03
 		m_GradientShader.Initialize();
+		m_3DShader.Initialize();
+
 		m_RenderPass.CreateRenderPass(surface, window);
-		m_GraphicsPipeline.CreateGraphicsPipeline(m_GradientShader, m_RenderPass.GetRenderPass());
+		//Should have moved the CreateVertexInputStateInfo to the Vertex Struct, would have been easier
+		m_GraphicsPipeline.CreateGraphicsPipeline(m_GradientShader, m_RenderPass.GetRenderPass(), Vertex2D::CreateVertexInputStateInfo());
+		m_3DGraphicsPipeline.CreateGraphicsPipeline(m_3DShader, m_RenderPass.GetRenderPass(), Vertex3D::CreateVertexInputStateInfo());
 		m_RenderPass.CreateFrameBuffers();
 		//createRenderPass();
 		//createGraphicsPipeline();
@@ -87,6 +92,7 @@ private:
 		//m_VertexBuffer.CreateVertexBuffer();
 
 		m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
+		Scene::GetInstance().Add3DDescriptorLayout(m_3DShader.GetDescriptorSetLayout());
 		Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), graphicsQueue, m_GradientShader.GetDescriptorSetLayout(), m_RenderPass.GetAspectRatio());
 
 		// week 06
@@ -112,8 +118,10 @@ private:
 		Scene::GetInstance().Destroy();
 
 		m_GraphicsPipeline.Destroy();
+		m_3DGraphicsPipeline.Destroy();
 
 		m_GradientShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
+		m_3DShader.DestoryDescriptorSetLayout();
 		m_RenderPass.Destroy();
 
 		m_Texture.Destroy();
@@ -137,7 +145,7 @@ private:
 	}
 
 	VulkanShader m_GradientShader{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
-	//VulkanShader m_GradientShader{ "shaders/3Dshader.vert.spv", "shaders/shader.frag.spv" };
+	VulkanShader m_3DShader{ "shaders/3Dshader.vert.spv", "shaders/3Dshader.frag.spv" };
 
 	GLFWwindow* window;
 	void InitWindow();
@@ -161,6 +169,7 @@ private:
 	
 	RenderPass m_RenderPass{};
 	GraphicsPipeline m_GraphicsPipeline{};
+	GraphicsPipeline m_3DGraphicsPipeline{};
 	//void createFrameBuffers();
 	//void createRenderPass();
 	//void createGraphicsPipeline();

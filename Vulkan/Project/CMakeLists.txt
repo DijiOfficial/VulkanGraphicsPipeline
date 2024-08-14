@@ -32,7 +32,7 @@ set(SOURCES
     
     "labwork/Week05.cpp"
     "labwork/Week06.cpp"
- "vulkanbase/VulkanBase.cpp" "mesh/Utils.h" "CommandPool.cpp" "CommandPool.h" "CommandBuffer.h" "CommandBuffer.cpp" "DataBuffer.h" "DataBuffer.cpp"  "Singleton.h" "mesh/Mesh.h" "mesh/Mesh.cpp" "Scene.h" "Scene.cpp" "RenderPass.h" "RenderPass.cpp" "SwapChainImageView.h" "SwapChainImageView.cpp" "GraphicsPipeline.h" "GraphicsPipeline.cpp" "DescriptorPool.h" "DescriptorPool.cpp" "DepthBuffer.h" "DepthBuffer.cpp" "textures/Textures.h" "textures/Textures.cpp")
+ "vulkanbase/VulkanBase.cpp" "mesh/Utils.h" "abstractions/CommandPool.cpp" "abstractions/CommandPool.h" "abstractions/CommandBuffer.h" "abstractions/CommandBuffer.cpp" "abstractions/DataBuffer.h" "abstractions/DataBuffer.cpp"  "Singleton.h" "mesh/Mesh.h" "mesh/Mesh.inl" "Scene.h" "Scene.cpp" "abstractions/RenderPass.h" "abstractions/RenderPass.cpp" "abstractions/SwapChainImageView.h" "abstractions/SwapChainImageView.cpp" "abstractions/GraphicsPipeline.h" "abstractions/GraphicsPipeline.cpp" "abstractions/DescriptorPool.h" "abstractions/DescriptorPool.cpp" "abstractions/DepthBuffer.h" "abstractions/DepthBuffer.cpp" "textures/Textures.h" "textures/Textures.cpp")
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES}  "vulkanbase/VulkanUtil.cpp"  "shaders/vulkan_shader.h" "shaders/vulkan_shader.cpp")

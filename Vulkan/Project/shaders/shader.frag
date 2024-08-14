@@ -7,6 +7,14 @@ layout(location = 0) out vec4 outColor;
 
 layout(binding = 1) uniform sampler2D texSampler;
 
-void main() {
-    outColor = texture(texSampler, fragTexCoord);
+void main() 
+{
+	if (fragTexCoord.x < 0.f) 
+    {
+        outColor = vec4(fragColor, 1.0);
+    }
+    else
+	{
+        outColor = texture(texSampler, fragTexCoord);
+    }
 }

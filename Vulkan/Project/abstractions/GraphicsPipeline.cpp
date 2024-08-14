@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
-void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRenderPass& renderPass)
+void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRenderPass& renderPass, const VkPipelineVertexInputStateCreateInfo& pipelineVertexInputStateCreateInfo)
 {
 	VkPipelineViewportStateCreateInfo viewportState{};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -52,6 +52,9 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 	dynamicState.pDynamicStates = dynamicStates.data();
 
+
+
+
 	//can seperate pipleline layout creation
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -68,12 +71,14 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 	//end layout creation
 
 
+
+
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
 	pipelineInfo.pStages = shader.GetShaderStages().data();
-	pipelineInfo.pVertexInputState = &shader.CreateVertexInputStateInfo();
+	pipelineInfo.pVertexInputState = &pipelineVertexInputStateCreateInfo;
 	pipelineInfo.pInputAssemblyState = &shader.CreateInputAssemblyStateInfo();
 
 	pipelineInfo.pViewportState = &viewportState;

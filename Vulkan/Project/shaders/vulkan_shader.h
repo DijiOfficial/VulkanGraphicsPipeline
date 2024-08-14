@@ -2,7 +2,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vector>
 #include <string>
-
+#include "mesh/Utils.h"
 class VulkanShader final
 {
 public:
@@ -25,8 +25,6 @@ public:
 	std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() { return m_ShaderStages; };
 	const VkDescriptorSetLayout& GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
 
-	//temp to remove
-	static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo();
 	VkPipelineInputAssemblyStateCreateInfo CreateInputAssemblyStateInfo();
 
 

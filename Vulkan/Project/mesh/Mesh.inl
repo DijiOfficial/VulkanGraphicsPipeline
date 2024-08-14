@@ -1,14 +1,7 @@
 #include "Mesh.h"
-#include "GraphicsPipeline.h"
 
-Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices, const std::vector<uint32_t>& indices)
-	: m_Vertices{ vertices }
-	, m_Indices{ indices }
-{
-	AllocateBuffer(commandPool, graphicsQueue, descriptorSetLayout);
-}
-
-void Mesh::Destroy()
+template<typename VertexType>
+void Mesh<VertexType>::Destroy()
 {
 	if (m_IsAllocated)
 	{
@@ -23,12 +16,14 @@ void Mesh::Destroy()
 	}
 }
 
-void Mesh::Update(uint32_t currentFrame, UniformBufferObject ubo)
+template<typename VertexType>
+void Mesh<VertexType>::Update(uint32_t currentFrame, UniformBufferObject ubo)
 {
 	m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
 }
 
-void Mesh::Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
+template<typename VertexType>
+void Mesh<VertexType>::Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
 {
 	if (!m_IsAllocated) return;
 
@@ -38,22 +33,34 @@ void Mesh::Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pi
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 }
 
-void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
-{
-	AddVertex(Vertex2D{ pos, color });
-}
+//void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
+//{
+//	AddVertex(Vertex2D{ pos, color });
+//}
+//
+//void Mesh::AddVertex(const Vertex2D& vertex)
+//{
+//	if (m_VertexIndexUMap.count(vertex) == 0)
+//	{
+//		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size());
+//		m_Vertices.push_back(vertex);
+//	}
+//	m_Indices.push_back(m_VertexIndexUMap[vertex]);
+//}
 
-void Mesh::AddVertex(const Vertex2D& vertex)
+template<typename VertexType>
+void Mesh<VertexType>::AddVertex(const VertexType& vertex)
 {
-	if (m_VertexIndexUMap.count(vertex) == 0)
+	if (m_VertexIndexUMap.find(vertex) == m_VertexIndexUMap.end())
 	{
-		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size());
 		m_Vertices.push_back(vertex);
+		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size() - 1);
 	}
 	m_Indices.push_back(m_VertexIndexUMap[vertex]);
 }
 
-void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
+template<typename VertexType>
+void Mesh<VertexType>::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
 {
 	if (!m_IsAllocated)
 	{
@@ -72,14 +79,14 @@ void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graph
 	}
 }
 
-void Mesh::BindBuffers(const VkCommandBuffer& commandBuffer) const
+template<typename VertexType>
+void Mesh<VertexType>::BindBuffers(const VkCommandBuffer& commandBuffer) const
 {
 	VkBuffer vertexBuffers[] = { m_VertexBuffer->GetDataBuffer() };
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 	vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->GetDataBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
 }
 
 

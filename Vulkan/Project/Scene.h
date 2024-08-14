@@ -8,7 +8,10 @@ public:
     void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, float aspectRatio);
 	void Destroy();
 
-    void DrawMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
+    void Add3DDescriptorLayout(const VkDescriptorSetLayout& descriptorSetLayout) { m_3DDescriptorSetLayout = descriptorSetLayout; };
+
+    void Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
+    void Draw3DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
 
     void CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments);
 
@@ -22,13 +25,14 @@ public:
     void Update(uint32_t currentFrame);
 
 private:
-    void CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    Mesh* AddMesh();
-    std::vector<std::unique_ptr<Mesh>> m_Meshes;
-    //std::vector<std::unique_ptr<Mesh3D>> m_3DMeshes;
+    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
+    Mesh<Vertex2D>* AddMesh();
+    std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;
+    std::vector<std::unique_ptr<Mesh<Vertex3D>>> m_Meshes3D;
 
     VkCommandPool m_CommandPool{};
     VkQueue m_GraphicsQueue{};
     VkDescriptorSetLayout m_DescriptorSetLayout{};
+    VkDescriptorSetLayout m_3DDescriptorSetLayout{};
     UniformBufferObject m_Ubo{};
 };
