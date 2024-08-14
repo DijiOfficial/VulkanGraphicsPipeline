@@ -28,6 +28,7 @@ public:
 	//temp to remove
 	static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo();
 	VkPipelineInputAssemblyStateCreateInfo CreateInputAssemblyStateInfo();
+	static void CreateDescriptorSetLayout();
 
 
 private:
@@ -36,9 +37,8 @@ private:
 
 	std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
 
-	VkDescriptorSetLayout m_DescriptorSetLayout;
+	inline static VkDescriptorSetLayout m_DescriptorSetLayout;
 
 	VkPipelineShaderStageCreateInfo CreateShaderInfo(bool isFragment);
 	VkShaderModule CreateShaderModule(const std::vector<char>& code);
-	void CreateDescriptorSetLayout();
 };

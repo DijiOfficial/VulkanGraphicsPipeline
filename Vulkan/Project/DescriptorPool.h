@@ -10,7 +10,7 @@ class DescriptorPool final
 {
 public:
     DescriptorPool() = default;
-    void Initialize(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
+    void Initialize(const VkDescriptorSetLayout& descriptorSetLayout);
     void Destroy();
     void UpdateUniformBuffer(uint32_t currentFrame, UniformBufferObject ubo);
 
@@ -39,5 +39,5 @@ private:
     void CreateDescriptorPool();
     void CreateDescriptorSets(const VkDescriptorSetLayout& descriptorSetLayout);
     void ConfigureDescriptors(size_t idx);
-    void CreateUniformBuffers(const VkCommandPool& commandPool, const VkQueue& graphicsQueue);
+    void CreateUniformBuffers();
 };

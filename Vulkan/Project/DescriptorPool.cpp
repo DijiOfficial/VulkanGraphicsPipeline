@@ -8,9 +8,9 @@
 
 #include <chrono>
 
-void DescriptorPool::Initialize(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
+void DescriptorPool::Initialize(const VkDescriptorSetLayout& descriptorSetLayout)
 {
-    CreateUniformBuffers(commandPool, graphicsQueue);
+    CreateUniformBuffers();
     CreateDescriptorPool();
 	CreateDescriptorSets(descriptorSetLayout);
 }
@@ -210,7 +210,7 @@ void DescriptorPool::ConfigureDescriptors(size_t idx)
 
 }
 
-void DescriptorPool::CreateUniformBuffers(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)
+void DescriptorPool::CreateUniformBuffers()
 {
     const VkDeviceSize bufferSize = sizeof(UniformBufferObject);
     const VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
