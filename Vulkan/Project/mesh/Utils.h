@@ -86,58 +86,7 @@ namespace std {
         }
     };
 }
-
 struct Vertex2D
-{
-    alignas(16) glm::vec2 m_Pos;
-    alignas(16) glm::vec3 m_Color;
-
-    static VkVertexInputBindingDescription GetBindingDescription()
-    {
-        VkVertexInputBindingDescription bindingDescription{};
-        bindingDescription.binding = 0;
-        bindingDescription.stride = sizeof(Vertex2D);
-        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-        return bindingDescription;
-    }
-
-    static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions()
-    {
-        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
-
-        attributeDescriptions[0].binding = 0;
-        attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(Vertex2D, m_Pos);
-
-        attributeDescriptions[1].binding = 0;
-        attributeDescriptions[1].location = 2;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(Vertex2D, m_Color); 
-
-        return attributeDescriptions;
-    }
-
-    bool operator==(const Vertex2D& other) const
-    {
-        return m_Pos == other.m_Pos;
-    }
-
-};
-
-namespace std {
-    template<> struct hash<Vertex2D>
-    {
-        size_t operator()(Vertex2D const& vertex) const
-        {
-            return ((hash<glm::vec2>()(vertex.m_Pos) ^
-                (hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1);
-        }
-    };
-}
-
-struct TextureVertex2D
 {
 	alignas(16) glm::vec2 m_Pos;
 	alignas(16) glm::vec3 m_Color;
@@ -147,7 +96,7 @@ struct TextureVertex2D
 	{
 		VkVertexInputBindingDescription bindingDescription{};
 		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(TextureVertex2D);
+		bindingDescription.stride = sizeof(Vertex2D);
 		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 		return bindingDescription;
@@ -160,22 +109,22 @@ struct TextureVertex2D
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
         attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(TextureVertex2D, m_Pos);
+        attributeDescriptions[0].offset = offsetof(Vertex2D, m_Pos);
 
         attributeDescriptions[1].binding = 0;
         attributeDescriptions[1].location = 2;
         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(TextureVertex2D, m_Color);
+        attributeDescriptions[1].offset = offsetof(Vertex2D, m_Color);
 
         attributeDescriptions[2].binding = 0;
         attributeDescriptions[2].location = 4;
         attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[2].offset = offsetof(TextureVertex2D, m_TexCoord);
+        attributeDescriptions[2].offset = offsetof(Vertex2D, m_TexCoord);
 
 		return attributeDescriptions;
 	}
 
-	bool operator==(const TextureVertex2D& other) const
+	bool operator==(const Vertex2D& other) const
 	{
 		return m_Pos == other.m_Pos;
 	}
@@ -183,9 +132,9 @@ struct TextureVertex2D
 };
 
 namespace std {
-	template<> struct hash<TextureVertex2D>
+	template<> struct hash<Vertex2D>
 	{
-		size_t operator()(TextureVertex2D const& vertex) const
+		size_t operator()(Vertex2D const& vertex) const
 		{
 			return ((hash<glm::vec2>()(vertex.m_Pos) ^
 				(hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1);

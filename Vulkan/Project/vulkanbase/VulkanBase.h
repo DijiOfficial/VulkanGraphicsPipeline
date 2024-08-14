@@ -68,18 +68,10 @@ private:
 		//swapChain and Image view handled by RenderPass
 		
 		
-		
 		// week 03
-		// pipelineManager?
-		m_2DTextureShader.Initialize();
-		m_2DShader.Initialize();
-
+		m_GradientShader.Initialize();
 		m_RenderPass.CreateRenderPass(surface, window);
-
-		VulkanShader::CreateDescriptorSetLayout();
-		m_TextureGraphicsPipeline.CreateGraphicsPipeline(m_2DTextureShader, m_RenderPass.GetRenderPass());
-		m_2DGraphicsPipeline.CreateGraphicsPipeline(m_2DShader, m_RenderPass.GetRenderPass());
-
+		m_GraphicsPipeline.CreateGraphicsPipeline(m_GradientShader, m_RenderPass.GetRenderPass());
 		m_RenderPass.CreateFrameBuffers();
 		//createRenderPass();
 		//createGraphicsPipeline();
@@ -95,8 +87,7 @@ private:
 		//m_VertexBuffer.CreateVertexBuffer();
 
 		m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
-		Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), graphicsQueue, m_2DTextureShader.GetDescriptorSetLayout(), m_RenderPass.GetAspectRatio());
-		Scene::GetInstance().Add2DDescriptorSetLayout(m_2DShader.GetDescriptorSetLayout());
+		Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), graphicsQueue, m_GradientShader.GetDescriptorSetLayout(), m_RenderPass.GetAspectRatio());
 
 		// week 06
 		createSyncObjects();
@@ -120,11 +111,9 @@ private:
 		m_CommandPool.DestroyCommandPool();
 		Scene::GetInstance().Destroy();
 
-		m_TextureGraphicsPipeline.Destroy();
-		m_2DGraphicsPipeline.Destroy();
+		m_GraphicsPipeline.Destroy();
 
-		m_2DTextureShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
-		m_2DShader.DestoryDescriptorSetLayout();
+		m_GradientShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
 		m_RenderPass.Destroy();
 
 		m_Texture.Destroy();
@@ -147,10 +136,8 @@ private:
 		}
 	}
 
-	VulkanShader m_2DTextureShader{ "shaders/TextureShader.vert.spv", "shaders/TextureShader.frag.spv" };
-	VulkanShader m_2DShader{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
-	//VulkanShader m_2DTextureShader{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
-	//VulkanShader m_2DTextureShader{ "shaders/3Dshader.vert.spv", "shaders/shader.frag.spv" };
+	VulkanShader m_GradientShader{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
+	//VulkanShader m_GradientShader{ "shaders/3Dshader.vert.spv", "shaders/shader.frag.spv" };
 
 	GLFWwindow* window;
 	void InitWindow();
@@ -173,8 +160,7 @@ private:
 	
 	
 	RenderPass m_RenderPass{};
-	GraphicsPipeline m_TextureGraphicsPipeline{};
-	GraphicsPipeline m_2DGraphicsPipeline{};
+	GraphicsPipeline m_GraphicsPipeline{};
 	//void createFrameBuffers();
 	//void createRenderPass();
 	//void createGraphicsPipeline();

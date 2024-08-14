@@ -10,15 +10,13 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
 
     m_GraphicsQueue = graphicsQueue;
     m_CommandPool = commandPool;
-    m_TextureDescriptorSetLayout = descriptorSetLayout;
-    //LevelParser::ParseLevel(m_3DMeshes, m_2DMeshes, commandPool, "resources/level.json");
+    m_DescriptorSetLayout = descriptorSetLayout;
+	//LevelParser::ParseLevel(m_3DMeshes, m_2DMeshes, commandPool, "resources/level.json");
     //for (auto& mesh : m_2DMeshes)
     //{
     //    mesh->MapBuffers();
     //    mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
     //}
-
-    //CreateRectangle({ -1.f, -1.f }, 2, 2);
 
     const std::vector<Vertex3D> vertices = {
         {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -27,7 +25,7 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 
-    const std::vector<TextureVertex2D> vertices2 = {
+    const std::vector<Vertex2D> vertices2 = {
         {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
         {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
@@ -48,32 +46,24 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
 
 void Scene::Destroy()
 {
-    for (auto& mesh : m_Meshes)
-    {
-        mesh->Destroy();
-    }
+	for (auto& mesh : m_Meshes)
+	{
+		mesh->Destroy();
+	}
     m_Meshes.clear();
 }
 
-void Scene::DrawTextureMeshes(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
+void Scene::DrawMeshes(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
 {
-    for (const auto& mesh : m_Meshes)
-    {
-        mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
-    }
+	for (const auto& mesh : m_Meshes)
+	{
+		mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
+	}
 
     //for (const auto& mesh : m_3DMeshes)
     //{
     //    mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
     //}
-}
-
-void Scene::Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
-{
-    for (const auto& mesh : m_2DMeshes)
-    {
-        mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
-    }
 }
 
 void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments)
@@ -94,12 +84,12 @@ void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSe
         mesh->AddVertex(p2, { 1.0f, 0.0f, 0.0f });
     }
 
-    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_2DDescriptorSetLayout);
+    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 }
 
 void Scene::CreateRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color)
 {
-    CreateRectangle(bottomLeft.x, bottomLeft.y, size.x, size.y, color);
+	CreateRectangle(bottomLeft.x, bottomLeft.y, size.x, size.y, color);
 }
 
 void Scene::CreateRectangle(const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color)
@@ -118,7 +108,7 @@ void Scene::CreateRectangle(float left, float bottom, float width, float height,
     mesh->AddVertex(glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f });
     mesh->AddVertex(glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f });
 
-    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_2DDescriptorSetLayout);
+    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 }
 
 void Scene::CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
@@ -143,7 +133,7 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
 
     CreateRectangle(mesh, left + radius, bottom, width - 2 * radius, height);
     CreateRectangle(mesh, left, bottom + radius, radius, height - 2 * radius);
-    CreateRectangle(mesh, left + width - radius, bottom + radius, radius, height - 2 * radius);
+    CreateRectangle(mesh, left + width - radius, bottom + radius, radius, height - 2 * radius); 
 
     auto createQuarterCircle = [&](const glm::vec2& center, float startAngle)
         {
@@ -168,7 +158,7 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
     createQuarterCircle({ left + width - radius, bottom + height - radius }, 0.0f);                     // Bottom-right corner
     createQuarterCircle({ left + radius, bottom + height - radius }, glm::half_pi<float>());            // Bottom-left corner
 
-    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_2DDescriptorSetLayout);
+    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 }
 
 void Scene::Update(uint32_t currentFrame)
@@ -178,18 +168,14 @@ void Scene::Update(uint32_t currentFrame)
         mesh->Update(currentFrame, m_Ubo);
     }
 
-    for (auto& mesh : m_2DMeshes)
-    {
-        mesh->Update(currentFrame, m_Ubo);
-    }
  //   for (auto& mesh : m_3DMeshes)
  //   {
  //       mesh->Update(currentFrame, m_Ubo);
 	//}
 }
 
-Mesh2D* Scene::AddMesh()
+Mesh* Scene::AddMesh()
 {
-    m_2DMeshes.push_back(std::make_unique<Mesh2D>());
-    return m_2DMeshes.back().get();
+    m_Meshes.push_back(std::make_unique<Mesh>());
+    return m_Meshes.back().get();
 }

@@ -1,18 +1,14 @@
 #pragma once
 #include "Singleton.h"
-//#include "mesh/Mesh.h"
-#include "mesh/2DMesh.h"
+#include "mesh/Mesh.h"
 
 class Scene final : public Singleton<Scene>
 {
 public:
     void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, float aspectRatio);
 	void Destroy();
-    //temp
-    void Add2DDescriptorSetLayout(const VkDescriptorSetLayout& descriptorSetLayout) { m_2DDescriptorSetLayout = descriptorSetLayout; };
 
-    void DrawTextureMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
-    void Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
+    void DrawMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
 
     void CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments);
 
@@ -27,14 +23,12 @@ public:
 
 private:
     void CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    Mesh2D* AddMesh();
+    Mesh* AddMesh();
     std::vector<std::unique_ptr<Mesh>> m_Meshes;
-    std::vector<std::unique_ptr<Mesh2D>> m_2DMeshes;
     //std::vector<std::unique_ptr<Mesh3D>> m_3DMeshes;
 
     VkCommandPool m_CommandPool{};
     VkQueue m_GraphicsQueue{};
-    VkDescriptorSetLayout m_TextureDescriptorSetLayout{};
-    VkDescriptorSetLayout m_2DDescriptorSetLayout{};
+    VkDescriptorSetLayout m_DescriptorSetLayout{};
     UniformBufferObject m_Ubo{};
 };

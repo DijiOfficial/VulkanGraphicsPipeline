@@ -44,11 +44,9 @@ void VulkanBase::DrawFrame(uint32_t imageIndex)
 	scissor.extent = swapChainExtent;
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_TextureGraphicsPipeline.GetGraphicsPipeline());
-	Scene::GetInstance().DrawTextureMeshes(commandBuffer, m_TextureGraphicsPipeline.GetPipelineLayout(), imageIndex);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline.GetGraphicsPipeline());
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_2DGraphicsPipeline.GetGraphicsPipeline());
-	Scene::GetInstance().DrawTextureMeshes(commandBuffer, m_2DGraphicsPipeline.GetPipelineLayout(), imageIndex);
+	Scene::GetInstance().DrawMeshes(commandBuffer, m_GraphicsPipeline.GetPipelineLayout(), imageIndex);
 
 	vkCmdEndRenderPass(commandBuffer);
 }

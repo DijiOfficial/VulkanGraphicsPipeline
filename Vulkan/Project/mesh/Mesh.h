@@ -16,7 +16,7 @@ class Mesh
 public:
     Mesh() = default;
     //pass by rvalue reference
-    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<TextureVertex2D>& vertices, const std::vector<uint32_t>& indices);
+    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices, const std::vector<uint32_t>& indices);
     
     virtual ~Mesh() = default;
     virtual void Destroy();
@@ -30,7 +30,7 @@ public:
     virtual void Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
 
     void AddVertex(const glm::vec2& pos, const glm::vec3& color = { 1, 1, 1 });
-    void AddVertex(const TextureVertex2D& vertex);
+    void AddVertex(const Vertex2D& vertex);
     virtual void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
     virtual void BindBuffers(const VkCommandBuffer& commandBuffer) const;
 
@@ -44,8 +44,8 @@ protected:
     std::vector<uint32_t> m_Indices = {};
 
 private:
-    std::unordered_map<TextureVertex2D, uint32_t> m_VertexIndexUMap{};
-    std::vector<TextureVertex2D> m_Vertices = {};
+    std::unordered_map<Vertex2D, uint32_t> m_VertexIndexUMap{};
+    std::vector<Vertex2D> m_Vertices = {};
 };
 
 //class Mesh3D final

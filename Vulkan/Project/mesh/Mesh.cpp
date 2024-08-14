@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include "GraphicsPipeline.h"
 
-Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<TextureVertex2D>& vertices, const std::vector<uint32_t>& indices)
+Mesh::Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices, const std::vector<uint32_t>& indices)
 	: m_Vertices{ vertices }
 	, m_Indices{ indices }
 {
@@ -40,10 +40,10 @@ void Mesh::Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pi
 
 void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
 {
-	AddVertex(TextureVertex2D{ pos, color });
+	AddVertex(Vertex2D{ pos, color });
 }
 
-void Mesh::AddVertex(const TextureVertex2D& vertex)
+void Mesh::AddVertex(const Vertex2D& vertex)
 {
 	if (m_VertexIndexUMap.count(vertex) == 0)
 	{
@@ -66,7 +66,7 @@ void Mesh::AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graph
 		m_VertexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, size, m_Vertices.data(), usage);
 		m_IndexBuffer = std::make_unique<DataBuffer>(commandPool, graphicsQueue, Isize, m_Indices.data(), Iusage);
 
-		m_DescriptorPool.Initialize(descriptorSetLayout);
+		m_DescriptorPool.Initialize(commandPool, graphicsQueue, descriptorSetLayout);
 
 		m_IsAllocated = true;
 	}
@@ -79,6 +79,7 @@ void Mesh::BindBuffers(const VkCommandBuffer& commandBuffer) const
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 	vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->GetDataBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
 }
 
 

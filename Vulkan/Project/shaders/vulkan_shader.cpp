@@ -7,7 +7,7 @@ void VulkanShader::Initialize()
 {
 	m_ShaderStages.push_back(CreateShaderInfo(true));
 	m_ShaderStages.push_back(CreateShaderInfo(false));
-	//CreateDescriptorSetLayout();
+	CreateDescriptorSetLayout();
 }
 
 void VulkanShader::Destroy()
@@ -39,8 +39,8 @@ VkPipelineShaderStageCreateInfo VulkanShader::CreateShaderInfo(bool isFragment)
 
 VkPipelineVertexInputStateCreateInfo VulkanShader::CreateVertexInputStateInfo()
 {
-	static auto bindingDescription = TextureVertex2D::GetBindingDescription();
-	static auto attributeDescriptions = TextureVertex2D::GetAttributeDescriptions();
+	static auto bindingDescription = Vertex2D::GetBindingDescription();
+	static auto attributeDescriptions = Vertex2D::GetAttributeDescriptions();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
