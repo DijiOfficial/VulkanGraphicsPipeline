@@ -23,7 +23,7 @@ public:
 	[[nodiscard]] const VkCommandBuffer& GetVkCommandBuffer() const { return m_CommandBuffer; };
 	void SetVkCommandBuffer(VkCommandBuffer buffer) { m_CommandBuffer = buffer; }
 
-	void SubmitInfo(VkSubmitInfo& submitInfo) const;
+	void SubmitInfo(VkSubmitInfo submitInfo, const VkQueue& graphicsQueue, const VkFence& fence) const;
 
 private:
 	VkCommandBuffer m_CommandBuffer{};

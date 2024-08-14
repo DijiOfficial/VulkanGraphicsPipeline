@@ -25,14 +25,23 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 
-    //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
-    //m_Meshes.push_back(std::make_unique<Mesh3D>(vertices));
+    const std::vector<Vertex2D> vertices2 = {
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
+    };
+    const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
+    //m_Meshes.push_back(std::make_unique<Mesh>(vertices));
+    m_Meshes.push_back(std::make_unique<Mesh>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices));
+
+    // this won't work unless I give it a TexCoord or give it a different shader/mesh
     //CreateRectangle({-1.f, -1.f} , 2 , 2);
-    CreateRectangle({-1.f, -1.f} , 2 , 2);
+    //CreateRectangle({-1.f, -1.f} , 2 , 2);
 
     //CreateCircle({0.0f, 0.0f}, 0.5f, 0.66f, 32);
-    CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
+    //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 }
 
 void Scene::Destroy()
@@ -50,6 +59,11 @@ void Scene::DrawMeshes(const VkCommandBuffer& commandBuffer, const VkPipelineLay
 	{
 		mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
 	}
+
+    //for (const auto& mesh : m_3DMeshes)
+    //{
+    //    mesh->Draw(commandBuffer, pipelineLayout, currentFrame);
+    //}
 }
 
 void Scene::CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments)
@@ -153,6 +167,11 @@ void Scene::Update(uint32_t currentFrame)
     {
         mesh->Update(currentFrame, m_Ubo);
     }
+
+ //   for (auto& mesh : m_3DMeshes)
+ //   {
+ //       mesh->Update(currentFrame, m_Ubo);
+	//}
 }
 
 Mesh* Scene::AddMesh()

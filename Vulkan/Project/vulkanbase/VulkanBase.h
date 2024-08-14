@@ -28,6 +28,9 @@
 #include <limits>
 #include <algorithm>
 
+//temp
+#include "textures/Textures.h"
+
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
 };
@@ -65,7 +68,6 @@ private:
 		//swapChain and Image view handled by RenderPass
 		
 		
-
 		// week 03
 		m_GradientShader.Initialize();
 		m_RenderPass.CreateRenderPass(surface, window);
@@ -78,6 +80,9 @@ private:
 
 		// week 02
 		m_CommandPool.Init(surface);
+		m_Texture.CreateTextureImage(graphicsQueue, m_CommandPool.GetCommandPool(), "pooop");
+		m_Texture.CreateTextureSampler();
+
 		//temp to remove later
 		//m_VertexBuffer.CreateVertexBuffer();
 
@@ -110,6 +115,8 @@ private:
 
 		m_GradientShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
 		m_RenderPass.Destroy();
+
+		m_Texture.Destroy();
 
 		if (enableValidationLayers) {
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
@@ -207,6 +214,9 @@ private:
 
 	// Week 05 
 	// Logical and physical device
+
+	//temp
+	Texture m_Texture;
 
 	VkQueue graphicsQueue;
 	VkQueue presentQueue;

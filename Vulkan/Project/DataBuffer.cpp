@@ -70,14 +70,7 @@ void DataBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& gra
 	commandBufferClass.EndFrame();
 
 	VkSubmitInfo submitInfo{};
-	commandBufferClass.SubmitInfo(submitInfo);
-
-	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to submit draw command buffer!");
-	}
-
-	vkQueueWaitIdle(graphicsQueue);
+	commandBufferClass.SubmitInfo(submitInfo, graphicsQueue, VK_NULL_HANDLE);
 
 	commandBufferClass.Destroy(commandPool);
 }

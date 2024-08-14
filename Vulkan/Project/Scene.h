@@ -2,7 +2,6 @@
 #include "Singleton.h"
 #include "mesh/Mesh.h"
 
-class Mesh;
 class Scene final : public Singleton<Scene>
 {
 public:
@@ -26,6 +25,7 @@ private:
     void CreateRectangle(Mesh* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
     Mesh* AddMesh();
     std::vector<std::unique_ptr<Mesh>> m_Meshes;
+    //std::vector<std::unique_ptr<Mesh3D>> m_3DMeshes;
 
     VkCommandPool m_CommandPool{};
     VkQueue m_GraphicsQueue{};

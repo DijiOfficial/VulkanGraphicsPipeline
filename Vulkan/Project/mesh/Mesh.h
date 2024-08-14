@@ -15,7 +15,8 @@ class Mesh
 {
 public:
     Mesh() = default;
-    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices);
+    //pass by rvalue reference
+    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex2D>& vertices, const std::vector<uint32_t>& indices);
     
     virtual ~Mesh() = default;
     virtual void Destroy();
@@ -37,45 +38,46 @@ protected:
     bool m_IsAllocated = false;
     std::unique_ptr<DataBuffer> m_VertexBuffer{};
     std::unique_ptr<DataBuffer> m_IndexBuffer{};
-    std::vector<uint32_t> m_Indices = {};
 
     //could be in Scene class for less overhead and memory usage
     DescriptorPool m_DescriptorPool;
+    std::vector<uint32_t> m_Indices = {};
 
 private:
     std::unordered_map<Vertex2D, uint32_t> m_VertexIndexUMap{};
     std::vector<Vertex2D> m_Vertices = {};
 };
 
-class Mesh3D final : public Mesh
-{
-public:
-    Mesh3D() = default;
-    explicit Mesh3D(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex3D>& vertices);
-
-    ~Mesh3D() override = default;
-
-    Mesh3D(const Mesh3D& other) = delete;
-    Mesh3D(Mesh3D&& other) = delete;
-    Mesh3D& operator=(const Mesh3D& other) = delete;
-    Mesh3D& operator=(Mesh3D&& other) = delete;
-
-    //void Update(uint32_t currentFrame, UniformBufferObject ubo);
-    //void Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
-
-    void AddVertex(const glm::vec3& pos, const glm::vec3& color = { 1, 1, 1 });
-    void AddVertex(const Vertex3D& vertex);
-    //void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
-    //void BindBuffers(const VkCommandBuffer& commandBuffer) const;
-
-private:
-    //bool m_IsAllocated = false;
-    //std::unique_ptr<DataBuffer> m_VertexBuffer{};
-    //std::unique_ptr<DataBuffer> m_IndexBuffer{};
-    std::unordered_map<Vertex3D, uint32_t> m_VertexIndexUMap{};
-    std::vector<Vertex3D> m_Vertices = {};
-    //std::vector<uint32_t> m_Indices = {};
-
-    //could be in Scene class for less overhead and memory usage
-    //DescriptorPool m_DescriptorPool;
-};
+//class Mesh3D final
+//{
+//public:
+//    Mesh3D() = default;
+//    explicit Mesh3D(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<Vertex3D>& vertices);
+//
+//    ~Mesh3D() = default;
+//    void Destroy();
+//
+//    Mesh3D(const Mesh3D& other) = delete;
+//    Mesh3D(Mesh3D&& other) = delete;
+//    Mesh3D& operator=(const Mesh3D& other) = delete;
+//    Mesh3D& operator=(Mesh3D&& other) = delete;
+//
+//    void Update(uint32_t currentFrame, UniformBufferObject ubo);
+//    void Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
+//
+//    void AddVertex(const glm::vec3& pos, const glm::vec3& color = { 1, 1, 1 });
+//    void AddVertex(const Vertex3D& vertex);
+//    void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
+//    void BindBuffers(const VkCommandBuffer& commandBuffer) const;
+//
+//private:
+//    bool m_IsAllocated = false;
+//    std::unique_ptr<DataBuffer> m_VertexBuffer{};
+//    std::unique_ptr<DataBuffer> m_IndexBuffer{};
+//    std::unordered_map<Vertex3D, uint32_t> m_VertexIndexUMap{};
+//    std::vector<Vertex3D> m_Vertices = {};
+//    std::vector<uint32_t> m_Indices = {};
+//
+//    //could be in Scene class for less overhead and memory usage
+//    DescriptorPool m_DescriptorPool;
+//};

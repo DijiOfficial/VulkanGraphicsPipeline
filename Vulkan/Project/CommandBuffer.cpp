@@ -51,17 +51,16 @@ void CommandBuffer::EndFrame() const
 	}
 }
 
-void CommandBuffer::SubmitInfo(VkSubmitInfo& submitInfo) const
+void CommandBuffer::SubmitInfo(VkSubmitInfo submitInfo, const VkQueue& graphicsQueue, const VkFence& fence) const
 {
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &m_CommandBuffer;
-	
-	if (submitInfo.pWaitSemaphores)
+
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence) != VK_SUCCESS)
 	{
-		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitDstStageMask = waitStages;
-		submitInfo.signalSemaphoreCount = 1;
+		throw std::runtime_error("failed to submit draw command buffer!");
 	}
+
+	vkQueueWaitIdle(graphicsQueue);
 }

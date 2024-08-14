@@ -13,24 +13,6 @@ struct Vertex3D
     alignas(16) glm::vec2 m_TexCoord;
     //alignas(16) glm::vec3 m_Tangent{};
 
-    static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
-    {
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-
-        static auto bindingDescription = Vertex3D::getBindingDescription();
-        static auto attributeDescriptions = Vertex3D::getAttributeDescriptions();
-
-        vertexInputInfo.vertexBindingDescriptionCount = 1;
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        //vertexInputInfo.vertexBindingDescriptionCount = 0; //&m_VertexInputBindingDescription
-        //vertexInputInfo.vertexAttributeDescriptionCount = 0;
-
-        return vertexInputInfo;
-    }
-
     static VkVertexInputBindingDescription getBindingDescription()
     {
 
@@ -48,18 +30,23 @@ struct Vertex3D
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
         attributeDescriptions[0].offset = offsetof(Vertex3D, m_Pos);
+
+        attributeDescriptions[1].binding = 0;
+        attributeDescriptions[1].location = 2;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[1].offset = offsetof(Vertex3D, m_Color);
+
+        attributeDescriptions[2].binding = 0;
+        attributeDescriptions[2].location = 4;
+        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[2].offset = offsetof(Vertex3D, m_TexCoord);
 
         //attributeDescriptions[1].binding = 0;
         //attributeDescriptions[1].location = 2;
         //attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
         //attributeDescriptions[1].offset = offsetof(Vertex3D, m_Normal);
-
-        attributeDescriptions[2].binding = 0;
-        attributeDescriptions[2].location = 4;
-        attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[2].offset = offsetof(Vertex3D, m_Color);
 
         //attributeDescriptions[3].binding = 0;
         //attributeDescriptions[3].location = 6;
@@ -103,6 +90,7 @@ struct Vertex2D
 {
 	alignas(16) glm::vec2 m_Pos;
 	alignas(16) glm::vec3 m_Color;
+    alignas(16) glm::vec2 m_TexCoord;
 
 	static VkVertexInputBindingDescription GetBindingDescription()
 	{
@@ -114,19 +102,24 @@ struct Vertex2D
 		return bindingDescription;
 	}
 
-	static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions()
+	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
 	{
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
-		attributeDescriptions[0].binding = 0;
-		attributeDescriptions[0].location = 0;
-		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[0].offset = offsetof(Vertex2D, m_Pos);
+        attributeDescriptions[0].binding = 0;
+        attributeDescriptions[0].location = 0;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[0].offset = offsetof(Vertex2D, m_Pos);
 
-		attributeDescriptions[1].binding = 0;
-		attributeDescriptions[1].location = 2;
-		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[1].offset = offsetof(Vertex2D, m_Color);
+        attributeDescriptions[1].binding = 0;
+        attributeDescriptions[1].location = 2;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[1].offset = offsetof(Vertex2D, m_Color);
+
+        attributeDescriptions[2].binding = 0;
+        attributeDescriptions[2].location = 4;
+        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[2].offset = offsetof(Vertex2D, m_TexCoord);
 
 		return attributeDescriptions;
 	}

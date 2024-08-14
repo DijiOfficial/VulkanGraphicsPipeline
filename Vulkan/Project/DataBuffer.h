@@ -18,11 +18,11 @@ public:
 	VkBuffer& GetDataBuffer()  { return m_DataBuffer; };
 	VkDeviceMemory& GetDataBufferMemory()  { return m_DataBufferMemory; };
 	static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 private:
 	VkBuffer m_DataBuffer;
 	VkDeviceMemory m_DataBufferMemory;
 
-	static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void CopyBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 };
