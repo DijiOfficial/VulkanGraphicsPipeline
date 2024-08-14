@@ -10,5 +10,6 @@ struct SwapChainImageView final
 
     void CreateImageViews();
 
-    static VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    //maybe no need for static if I can pass it to texture somehow
+    static VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 };

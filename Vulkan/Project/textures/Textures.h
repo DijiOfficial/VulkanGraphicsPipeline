@@ -29,6 +29,8 @@ public:
     void CreateTextureImage(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
     void Destroy();
 
+    //can remove static if texture is managed by render pass
+    static void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
     void CreateTextureSampler();
     inline static VkSampler m_TextureSampler;
     inline static VkImageView m_TextureImageView;
@@ -37,7 +39,6 @@ private:
     VkImage m_TextureImage;
     VkDeviceMemory m_TextureImageMemory;
 
-    void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
     void CreateTextureImageView();    
     void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, const VkQueue& graphicsQueue, const VkCommandPool& commandPool);
     void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, const VkQueue& graphicsQueue, const VkCommandPool& commandPool);

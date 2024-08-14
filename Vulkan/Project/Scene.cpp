@@ -44,7 +44,7 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     };
     const std::vector<uint32_t> indices2 = { 0, 1, 2, 2, 3, 0 };
 
-    m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices2));
+    //m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices2));
     m_Meshes3D.push_back(std::make_unique<Mesh<Vertex3D>>(commandPool, graphicsQueue, m_3DDescriptorSetLayout, vertices, indices));
 
     //CreateCircle({0.0f, 0.0f}, 0.5f, 0.5f, 32);

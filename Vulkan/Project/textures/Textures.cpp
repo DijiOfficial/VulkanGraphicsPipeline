@@ -91,7 +91,7 @@ void Texture::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkIm
 
 void Texture::CreateTextureImageView()
 {
-    m_TextureImageView = SwapChainImageView::CreateImageView(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB);
+    m_TextureImageView = SwapChainImageView::CreateImageView(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 void Texture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, const VkQueue& graphicsQueue, const VkCommandPool& commandPool)

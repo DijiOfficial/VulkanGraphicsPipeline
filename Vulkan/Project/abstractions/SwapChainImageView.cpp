@@ -8,7 +8,7 @@ void SwapChainImageView::CreateImageViews()
 
 	for (size_t i = 0; i < swapChainImages.size(); i++)
 	{
-		swapChainImageViews[i] = CreateImageView(swapChainImages[i], swapChainImageFormat);
+		swapChainImageViews[i] = CreateImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 }
 

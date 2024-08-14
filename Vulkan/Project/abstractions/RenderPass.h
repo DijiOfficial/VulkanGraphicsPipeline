@@ -2,14 +2,9 @@
 #include <vulkan/vulkan_core.h>
 #include "GLFW/glfw3.h"
 #include "SwapChainImageView.h"
+#include "DepthBuffer.h"
 
 #include <vector>
-//struct SwapChainImageView
-//{
-//	std::vector<VkImage> swapChainImages;
-//	VkFormat swapChainImageFormat;
-//	std::vector<VkImageView> swapChainImageViews;
-//};
 
 struct SwapChainSupportDetails
 {
@@ -37,8 +32,8 @@ public:
 	SwapChainImageView& GetImageView() { return m_ImageView; }
 
 private:
-	VkSwapchainKHR m_SwapChain;
-	SwapChainImageView m_ImageView;
+	VkSwapchainKHR m_SwapChain{};
+	SwapChainImageView m_ImageView{};
 
 	SwapChainSupportDetails QuerySwapChainSupport(const VkSurfaceKHR& surface);
 	VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -72,5 +67,6 @@ private:
 	std::vector<VkFramebuffer> m_SwapChainFramebuffers{};
 	VkExtent2D m_SwapChainExtent{};
 
-	SwapChain m_SwapChainHandle;
+	SwapChain m_SwapChainHandle{};
+	DepthBuffer m_DepthBuffer{};
 };

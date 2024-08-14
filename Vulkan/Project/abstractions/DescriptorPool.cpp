@@ -29,6 +29,7 @@ void DescriptorPool::Destroy()
 
 void DescriptorPool::UpdateUniformBuffer(uint32_t currentFrame, UniformBufferObject ubo)
 {
+    //todo: use Time Singleton from prog4
     static auto startTime = std::chrono::high_resolution_clock::now();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
