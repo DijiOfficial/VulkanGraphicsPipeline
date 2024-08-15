@@ -17,5 +17,4 @@ private:
 
 	std::unordered_map<std::string, std::unique_ptr<Texture>> m_TexturesUPtrUMap;
 	Texture* AddTexture(const std::string& fullPath);
-    
 };
