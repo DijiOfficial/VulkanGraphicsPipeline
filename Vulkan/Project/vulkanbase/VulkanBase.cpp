@@ -1,8 +1,8 @@
 #include "vulkanbase/VulkanBase.h"
 //temp for vertcies
 #include "mesh/Utils.h"
-#include "Scene.h"
-#include "InputManager.h"
+#include "core/Scene.h"
+#include "core/InputManager.h"
 
 void VulkanBase::InitVulkan()
 {

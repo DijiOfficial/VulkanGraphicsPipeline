@@ -5,8 +5,8 @@
 #include "abstractions/RenderPass.h"
 #include "abstractions/GraphicsPipeline.h"
 #include "abstractions/Handles.h"
-#include "Camera.h"
-#include "TimeSingleton.h"
+#include "core/Camera.h"
+#include "core/TimeSingleton.h"
 #include <chrono>
 
 //temp
