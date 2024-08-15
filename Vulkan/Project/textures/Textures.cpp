@@ -185,6 +185,7 @@ void Texture::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, 
     commandBuffer.Destroy(commandPool);
 }
 
+//todo: mve this to scene class
 void Texture::CreateTextureSampler()
 {
     VkPhysicalDeviceProperties properties{};

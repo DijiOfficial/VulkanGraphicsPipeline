@@ -27,8 +27,6 @@ void VulkanBase::InitVulkan()
 
 	m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
 
-	//temp
-
 	Scene::GetInstance().Add3DDescriptorLayout(m_3DShader.GetDescriptorSetLayout());
 	Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), m_Handles.GetGraphicsQueue(), m_GradientShader.GetDescriptorSetLayout(), m_Camera.GetProjectionMatrix(), m_RenderPass.GetAspectRatio());
 
