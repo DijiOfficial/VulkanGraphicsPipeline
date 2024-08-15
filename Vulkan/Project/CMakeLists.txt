@@ -30,9 +30,9 @@ set(SOURCES
     "vulkanbase/VulkanUtil.h"
     # Add other source files here
     
-    "labwork/Week05.cpp"
-    "labwork/Week06.cpp"
- "vulkanbase/VulkanBase.cpp" "mesh/Utils.h" "abstractions/CommandPool.cpp" "abstractions/CommandPool.h" "abstractions/CommandBuffer.h" "abstractions/CommandBuffer.cpp" "abstractions/DataBuffer.h" "abstractions/DataBuffer.cpp"  "Singleton.h" "mesh/Mesh.h" "mesh/Mesh.inl" "Scene.h" "Scene.cpp" "abstractions/RenderPass.h" "abstractions/RenderPass.cpp" "abstractions/SwapChainImageView.h" "abstractions/SwapChainImageView.cpp" "abstractions/GraphicsPipeline.h" "abstractions/GraphicsPipeline.cpp" "abstractions/DescriptorPool.h" "abstractions/DescriptorPool.cpp" "abstractions/DepthBuffer.h" "abstractions/DepthBuffer.cpp" "textures/Textures.h" "textures/Textures.cpp")
+    
+    
+ "vulkanbase/VulkanBase.cpp" "mesh/Utils.h" "abstractions/CommandPool.cpp" "abstractions/CommandPool.h" "abstractions/CommandBuffer.h" "abstractions/CommandBuffer.cpp" "abstractions/DataBuffer.h" "abstractions/DataBuffer.cpp"  "Singleton.h" "mesh/Mesh.h" "mesh/Mesh.inl" "Scene.h" "Scene.cpp" "abstractions/RenderPass.h" "abstractions/RenderPass.cpp" "abstractions/SwapChainImageView.h" "abstractions/SwapChainImageView.cpp" "abstractions/GraphicsPipeline.h" "abstractions/GraphicsPipeline.cpp" "abstractions/DescriptorPool.h" "abstractions/DescriptorPool.cpp" "abstractions/DepthBuffer.h" "abstractions/DepthBuffer.cpp" "textures/Textures.h" "textures/Textures.cpp" "mesh/MeshlLoader.h"  "mesh/MeshLoader.cpp" "abstractions/Handles.h" "abstractions/Handles.cpp")
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES}  "vulkanbase/VulkanUtil.cpp"  "shaders/vulkan_shader.h" "shaders/vulkan_shader.cpp")
@@ -41,3 +41,6 @@ add_dependencies(${PROJECT_NAME} Shaders)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Vulkan_LIBRARIES} glfw)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

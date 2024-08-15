@@ -78,14 +78,8 @@ struct Vertex3D
 
     bool operator==(const Vertex3D& other) const
     {
-        return m_Pos == other.m_Pos;
+        return m_Pos == other.m_Pos && m_Color == other.m_Color && m_TexCoord == other.m_TexCoord;
     }
-
-    //bool operator==(const Vertex3D& other) const
-    //{
-    //    return m_Pos == other.m_Pos && m_Normal == other.m_Normal && m_Color == other.m_Color && m_TexCoord == other.m_TexCoord
-    //        && m_Tangent == other.m_Tangent;
-    //}
 };
 
 namespace std {

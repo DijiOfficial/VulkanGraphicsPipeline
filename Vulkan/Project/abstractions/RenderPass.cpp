@@ -1,6 +1,6 @@
 #include "RenderPass.h"
 #include <vulkanbase/VulkanBase.h>
-#include <stdexcept>
+#include <algorithm>
 
 void RenderPass::CreateFrameBuffers()
 {

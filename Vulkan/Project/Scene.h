@@ -1,6 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include "mesh/Mesh.h"
+#include "mesh/MeshlLoader.h"
 
 class Scene final : public Singleton<Scene>
 {
@@ -25,8 +26,6 @@ public:
     void Update(uint32_t currentFrame);
 
 private:
-    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    Mesh<Vertex2D>* AddMesh();
     std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;
     std::vector<std::unique_ptr<Mesh<Vertex3D>>> m_Meshes3D;
 
@@ -35,4 +34,22 @@ private:
     VkDescriptorSetLayout m_DescriptorSetLayout{};
     VkDescriptorSetLayout m_3DDescriptorSetLayout{};
     UniformBufferObject m_Ubo{};
+    MeshLoader m_MeshLoader{};
+
+    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
+    
+    template <typename Vertex>
+    Mesh<Vertex>* AddMesh()
+    {
+        if constexpr (std::is_same<Vertex, Vertex3D>::value)
+        {
+            m_Meshes3D.push_back(std::make_unique<Mesh<Vertex3D>>());
+            return m_Meshes3D.back().get();
+        }
+        else
+        {
+            m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>());
+            return m_Meshes2D.back().get();
+        }
+    }
 };

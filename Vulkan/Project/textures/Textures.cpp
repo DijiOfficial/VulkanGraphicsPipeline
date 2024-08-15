@@ -1,17 +1,14 @@
 #include "Textures.h"
 #include "vulkanbase/VulkanBase.h"
-#include "abstractions/SwapChainImageView.h"
+#include "abstractions/DataBuffer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-void Texture::CreateTextureImage(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path)
-#include <stdexcept>
-#include <memory>
 
+void Texture::CreateTextureImage(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path)
 {
     int texWidth, texHeight, texChannels;
-    //temp
-    stbi_uc* pixels = stbi_load("C:/Users/Diji/OneDrive_DAE/(_DAE/Year 2/Graphics Programming 2/VulkanGraphicsPipeline/Vulkan/Project/textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels = stbi_load(path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if (!pixels)
