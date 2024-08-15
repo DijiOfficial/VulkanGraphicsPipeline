@@ -6,7 +6,7 @@
 class Scene final : public Singleton<Scene>
 {
 public:
-    void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, float aspectRatio);
+    void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio);
 	void Destroy();
 
     void Add3DDescriptorLayout(const VkDescriptorSetLayout& descriptorSetLayout) { m_3DDescriptorSetLayout = descriptorSetLayout; };
@@ -23,7 +23,7 @@ public:
     void CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
     void CreateRoundedRectangle(float left, float bottom, float width, float height, float radius, int nrOfSegments);
 
-    void Update(uint32_t currentFrame);
+    void Update(const glm::mat4& viewMatrix, uint32_t currentFrame);
 
 private:
     std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;
@@ -33,7 +33,8 @@ private:
     VkQueue m_GraphicsQueue{};
     VkDescriptorSetLayout m_DescriptorSetLayout{};
     VkDescriptorSetLayout m_3DDescriptorSetLayout{};
-    UniformBufferObject m_Ubo{};
+    UniformBufferObject m_2DUniformBufferObject{};
+    UniformBufferObject m_3DUniformBufferObject{};
     MeshLoader m_MeshLoader{};
 
     void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });

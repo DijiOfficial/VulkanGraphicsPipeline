@@ -5,6 +5,12 @@
 #include "abstractions/RenderPass.h"
 #include "abstractions/GraphicsPipeline.h"
 #include "abstractions/Handles.h"
+#include "Camera.h"
+#include "TimeSingleton.h"
+#include <chrono>
+
+//temp
+#include "textures/Textures.h"
 
 class VulkanBase {
 public:
@@ -22,10 +28,20 @@ private:
 	void InitVulkan();
 	void Cleanup();
 
-	void MainLoop() {
-		while (!glfwWindowShouldClose(window)) {
+	void MainLoop() 
+	{
+		auto lastFrameTime{ std::chrono::high_resolution_clock::now() };
+
+		while (!glfwWindowShouldClose(window)) 
+		{
+			const auto currentTime{ std::chrono::high_resolution_clock::now() };
+			const float deltaTime{ std::chrono::duration<float>(currentTime - lastFrameTime).count() };
+			lastFrameTime = currentTime;
+			diji::TimeSingleton::GetInstance().SetDeltaTime(deltaTime);
+
 			glfwPollEvents();
-			// week 06
+
+			m_Camera.Update();
 			DrawFrame();
 		}
 		vkDeviceWaitIdle(device);
@@ -39,10 +55,13 @@ private:
 	RenderPass m_RenderPass{};
 	GraphicsPipeline m_GraphicsPipeline{};
 	GraphicsPipeline m_3DGraphicsPipeline{};
-	Handles m_Handles;
-
+	Handles m_Handles{};
+	Camera m_Camera{};
 
 	void InitWindow();
 	void DrawFrame(uint32_t imageIndex);
 	void DrawFrame();
+	
+	//temp
+	Texture m_Texture;
 };

@@ -1,12 +1,14 @@
 #include "Scene.h"
 #include <glm/gtc/constants.hpp>
 
-void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, float aspectRatio)
+void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio)
 {
-    m_Ubo.model = glm::mat4(1.f);
-    m_Ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    m_Ubo.proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 10.0f);
-    m_Ubo.proj[1][1] *= -1;
+    m_3DUniformBufferObject.proj = projectionMatrix;
+
+    m_2DUniformBufferObject.model = glm::mat4(1.f);
+    m_2DUniformBufferObject.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_2DUniformBufferObject.proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 10.0f);
+    m_2DUniformBufferObject.proj[1][1] *= -1;
 
     m_GraphicsQueue = graphicsQueue;
     m_CommandPool = commandPool;
@@ -51,7 +53,8 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 
     const auto& mesh = AddMesh<Vertex3D>();
-    m_MeshLoader.LoadModel(mesh, "resources/obj/viking_room.obj", true);
+    m_MeshLoader.LoadModel(mesh, "resources/obj/test.obj", true);
+    //m_MeshLoader.LoadModel(mesh, "resources/obj/viking_room.obj", true);
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 
     //const auto& sphere = AddMesh<Vertex3D>();
@@ -185,15 +188,17 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 }
 
-void Scene::Update(uint32_t currentFrame)
+void Scene::Update(const glm::mat4& viewMatrix, uint32_t currentFrame)
 {
+    m_3DUniformBufferObject.view = viewMatrix;
+
     for (auto& mesh : m_Meshes2D)
     {
-        mesh->Update(currentFrame, m_Ubo);
+        mesh->Update(currentFrame, m_2DUniformBufferObject);
     }
 
     for (auto& mesh : m_Meshes3D)
     {
-        mesh->Update(currentFrame, m_Ubo);
+        mesh->Update(currentFrame, m_3DUniformBufferObject);
 	}
 }

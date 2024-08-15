@@ -2,6 +2,7 @@
 //temp for vertcies
 #include "mesh/Utils.h"
 #include "Scene.h"
+#include "InputManager.h"
 
 void VulkanBase::InitVulkan()
 {
@@ -16,6 +17,10 @@ void VulkanBase::InitVulkan()
 	m_3DGraphicsPipeline.CreateGraphicsPipeline(m_3DShader, m_RenderPass.GetRenderPass(), Vertex3D::CreateVertexInputStateInfo());
 	m_RenderPass.CreateFrameBuffers();
 
+	m_Camera.SetAspectRatio(m_RenderPass.GetAspectRatio());
+	m_Camera.Initialize(45.f, { 0.f, 0.f, -2.f });
+	//m_Camera.Initialize(45.0f, { 0.0f, 0.0f, -50.0f });
+
 	m_CommandPool.Init(m_Handles.GetSurface());
 	m_Texture.CreateTextureImage(m_Handles.GetGraphicsQueue(), m_CommandPool.GetCommandPool(), "resources/textures/viking_room.png");
 	m_Texture.CreateTextureSampler();
@@ -25,7 +30,7 @@ void VulkanBase::InitVulkan()
 	//temp
 
 	Scene::GetInstance().Add3DDescriptorLayout(m_3DShader.GetDescriptorSetLayout());
-	Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), m_Handles.GetGraphicsQueue(), m_GradientShader.GetDescriptorSetLayout(), m_RenderPass.GetAspectRatio());
+	Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), m_Handles.GetGraphicsQueue(), m_GradientShader.GetDescriptorSetLayout(), m_Camera.GetProjectionMatrix(), m_RenderPass.GetAspectRatio());
 
 	m_Handles.InitializeSyncObjects();
 }
@@ -42,7 +47,7 @@ void VulkanBase::Cleanup()
 	m_GraphicsPipeline.Destroy();
 	m_3DGraphicsPipeline.Destroy();
 
-	m_GradientShader.DestoryDescriptorSetLayout(); //might not work if object is destoryed, but I destory the shader not the object
+	m_GradientShader.DestoryDescriptorSetLayout();
 	m_3DShader.DestoryDescriptorSetLayout();
 	m_RenderPass.Destroy();
 
@@ -64,6 +69,8 @@ void VulkanBase::InitWindow()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+
+	InputManager::GetInstance().Init(window);
 }
 
 void VulkanBase::DrawFrame(uint32_t imageIndex)
@@ -128,8 +135,7 @@ void VulkanBase::DrawFrame()
 	//	VK_SHADER_STAGE_FRAGMENT_BIT,
 	//	sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_ShadingMode);
 
-	//m_Level.Update(imageIndex, m_Camera.m_ViewMatrix);
-	Scene::GetInstance().Update(imageIndex);
+	Scene::GetInstance().Update(m_Camera.GetInverseViewMatrix(), imageIndex);
 
 	DrawFrame(imageIndex);
 	m_CommandBuffer.EndFrame();

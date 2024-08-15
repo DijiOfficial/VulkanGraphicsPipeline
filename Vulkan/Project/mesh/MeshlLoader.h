@@ -34,7 +34,4 @@ private:
     //static void AddRect(Mesh2D& mesh, float top, float left, float bottom, float right);
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
-
-    const std::string MODEL_PATH = "resources/obj/viking_room.obj";
-    const std::string TEXTURE_PATH = "resources/textures/viking_room.png";
 };
