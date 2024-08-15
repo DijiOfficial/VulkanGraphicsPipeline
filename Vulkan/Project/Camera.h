@@ -31,12 +31,12 @@ private:
     glm::mat4x4 m_ViewMatrix{};
     glm::mat4x4 m_ProjectionMatrix{};
 
-    glm::vec3 m_Origin = { 0.0f, 0.0f, 0.0f };
-    float   m_FOVAngle = { 90.f };
-    float   m_FOV{};
-    float   m_AspectRatio{};
-    float   m_NearPlane = { 1.f };
-    float   m_FarPlane = { 1000.f };
+    glm::vec3   m_Origin = { 0.0f, 0.0f, 0.0f };
+    float       m_FOVAngle = { 90.f };
+    float       m_FOV{};
+    float       m_AspectRatio{};
+    float       m_NearPlane = { 1.f };
+    float       m_FarPlane = { 1000.f };
 
     constexpr static glm::vec3 RIGHT{ 1.f, 0.f, 0.f };
     constexpr static glm::vec3 UP{ 0.f, 1.f, 0.f };
