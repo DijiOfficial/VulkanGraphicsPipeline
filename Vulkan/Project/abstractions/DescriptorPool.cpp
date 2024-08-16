@@ -1,12 +1,12 @@
 #include "DescriptorPool.h"
 #include "vulkanbase/VulkanBase.h"
 #include "textures/Textures.h"
+#include "core/TimeSingleton.h"
+#include "core/ResourceManager.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include "core/TimeSingleton.h"
 
 void DescriptorPool::Initialize(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
 {
@@ -85,9 +85,8 @@ void DescriptorPool::ConfigureDescriptors(size_t idx)
 
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    //imageInfo.imageView = m_AlbedoImageView;
-    imageInfo.imageView = Texture::m_TextureImageView;
-    imageInfo.sampler = Texture::m_TextureSampler;
+    imageInfo.imageView = m_AlbedoImageView;
+    imageInfo.sampler = ResourceManager::GetInstance().GetTextureSampler();
 
     std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 

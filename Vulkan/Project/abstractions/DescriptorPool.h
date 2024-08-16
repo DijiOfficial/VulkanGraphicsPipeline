@@ -20,10 +20,10 @@ public:
     DescriptorPool& operator=(DescriptorPool&& other) = delete;
 
     const VkDescriptorSet& GetDescriptorSets(uint32_t idx) const { return m_DescriptorSetsVec[idx]; };
-    //void SetAlbedoImageView(VkImageView imageView);
-    //void SetNormalImageView(VkImageView imageView);
-    //void SetGlossImageView(VkImageView imageView);
-    //void SetSpecularImageView(VkImageView imageView);
+    void SetAlbedo(VkImageView imageView) { m_AlbedoImageView = imageView; };
+    //void SetNormal(VkImageView imageView);
+    //void SetGloss(VkImageView imageView);
+    //void SetSpecular(VkImageView imageView);
 
 private:
     std::vector<void*> m_UniformBuffersMapped;
@@ -31,7 +31,7 @@ private:
     std::vector<VkDescriptorSet> m_DescriptorSetsVec;
     VkDescriptorPool m_DescriptorPool;
 
-    //VkImageView m_AlbedoImageView;
+    VkImageView m_AlbedoImageView;
     //VkImageView m_NormalImageView;
     //VkImageView m_GlossImageView;
     //VkImageView m_SpecularImageView;
