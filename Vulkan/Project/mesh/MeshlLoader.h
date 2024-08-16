@@ -13,6 +13,13 @@ class Mesh;
 class MeshLoader final
 {
 public:
+    MeshLoader() = default;
+    ~MeshLoader() = default;
+
+    MeshLoader(const MeshLoader& other) = delete;
+    MeshLoader(MeshLoader&& other) = delete;
+    MeshLoader& operator=(const MeshLoader& other) = delete;
+    MeshLoader& operator=(MeshLoader&& other) = delete;
     //3D Mesh
     void LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool triangulate);
     //static void InitializeCube(Mesh3D& mesh, const glm::vec3& bottomLeftBackCorner, float sideLength);
