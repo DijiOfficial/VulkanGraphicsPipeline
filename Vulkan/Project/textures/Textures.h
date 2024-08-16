@@ -25,19 +25,18 @@ public:
     //bool operator==(const Texture& rhs) const;
     //bool operator!=(const Texture& rhs) const;
 
-    //TODO: Add a texture manager that checks whether a texture path is already loaded
     void CreateTextureImage(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
     void Destroy();
 
+    VkImageView& GetTextureImageView() { return m_TextureImageView; }
+
     //can remove static if texture is managed by render pass
     static void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-    void CreateTextureSampler();
-    inline static VkSampler m_TextureSampler;
-    inline static VkImageView m_TextureImageView;
 
 private:
     VkImage m_TextureImage;
     VkDeviceMemory m_TextureImageMemory;
+    VkImageView m_TextureImageView;
 
     void CreateTextureImageView();    
     void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, const VkQueue& graphicsQueue, const VkCommandPool& commandPool);
