@@ -9,9 +9,6 @@
 #include "core/TimeSingleton.h"
 #include <chrono>
 
-//temp
-#include "textures/Textures.h"
-
 class VulkanBase {
 public:
 	void run() {
@@ -61,7 +58,4 @@ private:
 	void InitWindow();
 	void DrawFrame(uint32_t imageIndex);
 	void DrawFrame();
-	
-	//temp
-	Texture m_Texture;
 };
