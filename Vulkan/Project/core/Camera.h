@@ -6,6 +6,7 @@ class Camera final
 public:
     Camera() = default;
     Camera(const glm::vec3& _origin, float _fovAngle);
+    ~Camera() = default;
 
     Camera(const Camera& other) = delete;
     Camera(Camera&& other) noexcept = delete;

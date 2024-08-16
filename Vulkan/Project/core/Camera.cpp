@@ -26,10 +26,10 @@ void Camera::Update()
 {
     const auto& input = InputManager::GetInstance().GetPressedKeys();
     const float deltaTime = diji::TimeSingleton::GetInstance().GetDeltaTime();
-    int speed{ 2 };
+    int speed{ 20 };
 
     if (input.count(GLFW_KEY_LEFT_SHIFT))
-        speed *= 3;
+        speed *= 4;
 
     const float translation = deltaTime * speed;
 
@@ -46,7 +46,7 @@ void Camera::Update()
         m_Origin += m_Right * translation;
 
     const auto& mouse = InputManager::GetInstance().GetMouseMouvementVec();
-
+    speed = 2;
     if (InputManager::GetInstance().IsRightMousePressed() && !InputManager::GetInstance().IsMouseIdle())
     {
         if (InputManager::GetInstance().IsLeftMousePressed() && mouse.y)
