@@ -1,7 +1,6 @@
 #include "DescriptorPool.h"
 #include "vulkanbase/VulkanBase.h"
 #include "textures/Textures.h"
-#include "core/TimeSingleton.h"
 #include "core/ResourceManager.h"
 
 #define GLM_FORCE_RADIANS
@@ -29,9 +28,6 @@ void DescriptorPool::Destroy()
 
 void DescriptorPool::UpdateUniformBuffer(uint32_t currentFrame, UniformBufferObject ubo)
 {
-    const float time = diji::TimeSingleton::GetInstance().GetDeltaTime();
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
     memcpy(m_UniformBuffersMapped[currentFrame], &ubo, sizeof(ubo));
 }
 

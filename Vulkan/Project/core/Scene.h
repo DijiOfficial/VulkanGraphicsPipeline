@@ -9,6 +9,7 @@ public:
     void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio);
 	void Destroy();
 
+    void Update(const glm::mat4& viewMatrix, uint32_t currentFrame);
     void Add3DDescriptorLayout(const VkDescriptorSetLayout& descriptorSetLayout) { m_3DDescriptorSetLayout = descriptorSetLayout; };
 
     void Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
@@ -22,8 +23,6 @@ public:
 
     void CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
     void CreateRoundedRectangle(float left, float bottom, float width, float height, float radius, int nrOfSegments);
-
-    void Update(const glm::mat4& viewMatrix, uint32_t currentFrame);
 
 private:
     std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;

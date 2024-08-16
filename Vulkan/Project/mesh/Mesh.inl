@@ -1,5 +1,9 @@
 #include "Mesh.h"
 
+//temp
+#include "core/Camera.h"
+#include "core/TimeSingleton.h"
+
 template<typename VertexType>
 void Mesh<VertexType>::Destroy()
 {
@@ -19,6 +23,11 @@ void Mesh<VertexType>::Destroy()
 template<typename VertexType>
 void Mesh<VertexType>::Update(uint32_t currentFrame, UniformBufferObject ubo)
 {
+	const float time = diji::TimeSingleton::GetInstance().GetDeltaTime();
+	m_ElapsedTime += time;
+	//todo: create Rotation class?
+	ubo.model = glm::rotate(glm::mat4(1.0f), m_ElapsedTime * glm::radians(90.0f), Camera::UP);
+
 	m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
 }
 
@@ -32,21 +41,6 @@ void Mesh<VertexType>::Draw(const VkCommandBuffer& commandBuffer, const VkPipeli
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_DescriptorPool.GetDescriptorSets(currentFrame), 0, nullptr);
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 }
-
-//void Mesh::AddVertex(const glm::vec2& pos, const glm::vec3& color)
-//{
-//	AddVertex(Vertex2D{ pos, color });
-//}
-//
-//void Mesh::AddVertex(const Vertex2D& vertex)
-//{
-//	if (m_VertexIndexUMap.count(vertex) == 0)
-//	{
-//		m_VertexIndexUMap[vertex] = static_cast<uint32_t>(m_Vertices.size());
-//		m_Vertices.push_back(vertex);
-//	}
-//	m_Indices.push_back(m_VertexIndexUMap[vertex]);
-//}
 
 template<typename VertexType>
 void Mesh<VertexType>::AddVertex(const VertexType& vertex)

@@ -79,6 +79,21 @@ void Scene::Destroy()
     m_Meshes3D.clear();
 }
 
+void Scene::Update(const glm::mat4& viewMatrix, uint32_t currentFrame)
+{
+    m_3DUniformBufferObject.view = viewMatrix;
+
+    for (auto& mesh : m_Meshes2D)
+    {
+        mesh->Update(currentFrame, m_2DUniformBufferObject);
+    }
+
+    for (auto& mesh : m_Meshes3D)
+    {
+        mesh->Update(currentFrame, m_3DUniformBufferObject);
+    }
+}
+
 void Scene::Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const
 {
     for (const auto& mesh : m_Meshes2D)
@@ -188,19 +203,4 @@ void Scene::CreateRoundedRectangle(float left, float bottom, float width, float 
     createQuarterCircle({ left + radius, bottom + height - radius }, glm::half_pi<float>());            // Bottom-left corner
 
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
-}
-
-void Scene::Update(const glm::mat4& viewMatrix, uint32_t currentFrame)
-{
-    m_3DUniformBufferObject.view = viewMatrix;
-
-    for (auto& mesh : m_Meshes2D)
-    {
-        mesh->Update(currentFrame, m_2DUniformBufferObject);
-    }
-
-    for (auto& mesh : m_Meshes3D)
-    {
-        mesh->Update(currentFrame, m_3DUniformBufferObject);
-	}
 }

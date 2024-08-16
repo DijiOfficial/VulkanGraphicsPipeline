@@ -40,6 +40,8 @@ public:
 
 protected:
     bool m_IsAllocated = false;
+    float m_ElapsedTime = 0.f;
+
     std::unique_ptr<DataBuffer> m_VertexBuffer{};
     std::unique_ptr<DataBuffer> m_IndexBuffer{};
     std::unordered_map<VertexType, uint32_t> m_VertexIndexUMap{};

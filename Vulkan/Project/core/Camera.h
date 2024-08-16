@@ -25,6 +25,10 @@ public:
     glm::mat4x4 GetInverseViewMatrix() const { return m_InverseViewMatrix; }
     glm::mat4x4 GetProjectionMatrix()  const { return m_ProjectionMatrix; }
 
+    inline constexpr static glm::vec3 RIGHT{ 1.f, 0.f, 0.f };
+    inline constexpr static glm::vec3 UP{ 0.f, 1.f, 0.f };
+    inline constexpr static glm::vec3 FORWARD{ 0.f, 0.f, 1.f };
+
 private:
     void CalculateFOV() { m_FOV = glm::radians(m_FOVAngle) * 0.5f; };
 
@@ -38,10 +42,6 @@ private:
     float       m_AspectRatio{};
     float       m_NearPlane = { 1.f };
     float       m_FarPlane = { 1000.f };
-
-    constexpr static glm::vec3 RIGHT{ 1.f, 0.f, 0.f };
-    constexpr static glm::vec3 UP{ 0.f, 1.f, 0.f };
-    constexpr static glm::vec3 FORWARD{ 0.f, 0.f, 1.f };
 
     glm::vec3 m_Right{ RIGHT };
     glm::vec3 m_Up{ UP };
