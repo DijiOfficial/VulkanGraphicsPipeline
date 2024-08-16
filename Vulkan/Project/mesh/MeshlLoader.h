@@ -1,12 +1,13 @@
 #pragma once
-
 #include <glm/detail/type_vec3.hpp>
 #include <string>
-
 
 //temp
 #include <vector>
 #include "Utils.h"
+
+#include "tiny_obj_loader.h"
+
 
 template<typename VertexType>
 class Mesh;
@@ -34,7 +35,7 @@ public:
 
 private:
     //static glm::vec3 Reject(const glm::vec3& a, const glm::vec3& b);
-    //[[nodiscard]] static Vertex3D GetVertexByIndex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index);
+    Vertex3D CreateVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index);
     //static void AddRectPlane(Mesh3D& mesh, Vertex3D& bottomLeft, Vertex3D& topLeft, Vertex3D& topRight,
     //    Vertex3D& bottomRight, bool isClockWise, bool keepNormals = false);
 

@@ -2,6 +2,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include "Mesh.h"
+#include <stdexcept>
 
 void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool triangulate)
 {
@@ -16,27 +17,37 @@ void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool t
 
     for (const auto& shape : shapes)
     {
-        for (const auto& index : shape.mesh.indices)
+        for (size_t i = 0; i < shape.mesh.indices.size(); i += 3)
         {
-            Vertex3D vertex{};
+            // Indices for the triangle vertices
+            auto& vertex0 = CreateVertex(attrib, shape.mesh.indices[i + 0]);
+            auto& vertex1 = CreateVertex(attrib, shape.mesh.indices[i + 1]);
+            auto& vertex2 = CreateVertex(attrib, shape.mesh.indices[i + 2]);
 
-            //vertices.push_back(vertex);
-            //indices.push_back(indices.size());
+            // Edges of the triangle: position delta
+            const glm::vec3 deltaPos1 = vertex1.m_Pos - vertex0.m_Pos;
+            const glm::vec3 deltaPos2 = vertex2.m_Pos - vertex0.m_Pos;
 
-            vertex.m_Pos = {
-            attrib.vertices[3 * index.vertex_index + 0],
-            attrib.vertices[3 * index.vertex_index + 1],
-            -attrib.vertices[3 * index.vertex_index + 2]
-            };
+            // UV delta
+            const glm::vec2 deltaUV1 = vertex1.m_TexCoord - vertex0.m_TexCoord;
+            const glm::vec2 deltaUV2 = vertex2.m_TexCoord - vertex0.m_TexCoord;
 
-            vertex.m_TexCoord = {
-                attrib.texcoords[2 * index.texcoord_index + 0],
-                1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-            };
+            // Calculate the tangent
+            const float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+            glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
 
-            vertex.m_Color = { 1.0f, 1.0f, 1.0f };
+            // Gram-Schmidt orthogonalize tangent with respect to normal
+            tangent = glm::normalize(tangent - vertex0.m_Normal * glm::dot(vertex0.m_Normal, tangent));
+            tangent.z *= -1;
 
-            mesh->AddVertex(vertex);
+            // Store the tangent for each vertex of the triangle
+            vertex0.m_Tangent = tangent;
+            vertex1.m_Tangent = tangent;
+            vertex2.m_Tangent = tangent;
+
+            mesh->AddVertex(vertex0);
+            mesh->AddVertex(vertex1);
+            mesh->AddVertex(vertex2);
         }
     }
 }
@@ -89,4 +100,31 @@ void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center,
             }
         }
     }
+}
+
+Vertex3D MeshLoader::CreateVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index)
+{
+    Vertex3D vertex{};
+    
+    vertex.m_Pos = {
+        attrib.vertices[3 * index.vertex_index + 0],
+        attrib.vertices[3 * index.vertex_index + 1],
+        -attrib.vertices[3 * index.vertex_index + 2]
+    };
+
+    vertex.m_Normal = {
+		attrib.normals[3 * index.normal_index + 0],
+		attrib.normals[3 * index.normal_index + 1],
+		-attrib.normals[3 * index.normal_index + 2]
+	};
+
+    if (index.texcoord_index >= 0)
+    {
+        vertex.m_TexCoord = {
+			attrib.texcoords[2 * index.texcoord_index + 0],
+			1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+		};
+	}
+
+	return vertex;
 }
