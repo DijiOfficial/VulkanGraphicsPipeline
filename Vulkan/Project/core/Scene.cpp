@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include <glm/gtc/constants.hpp>
+#include "textures/TextureManager.h"
 
 void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio)
 {
@@ -53,8 +54,9 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 
     const auto& mesh = AddMesh<Vertex3D>();
-    m_MeshLoader.LoadModel(mesh, "resources/obj/test.obj", true);
+    m_MeshLoader.LoadModel(mesh, "resources/obj/vehicle.obj", true);
     //m_MeshLoader.LoadModel(mesh, "resources/obj/viking_room.obj", true);
+    mesh->GetTextureManager().UploadAlbedoTexture(graphicsQueue, commandPool, "vehicle_diffuse.png");
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 
     //const auto& sphere = AddMesh<Vertex3D>();
