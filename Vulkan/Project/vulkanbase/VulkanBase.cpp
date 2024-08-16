@@ -3,6 +3,7 @@
 #include "mesh/Utils.h"
 #include "core/Scene.h"
 #include "core/InputManager.h"
+#include "core/ResourceManager.h"
 
 void VulkanBase::InitVulkan()
 {
@@ -18,12 +19,11 @@ void VulkanBase::InitVulkan()
 	m_RenderPass.CreateFrameBuffers();
 
 	m_Camera.SetAspectRatio(m_RenderPass.GetAspectRatio());
-	m_Camera.Initialize(45.f, { 0.f, 0.f, -2.f });
-	//m_Camera.Initialize(45.0f, { 0.0f, 0.0f, -50.0f });
+	//m_Camera.Initialize(45.f, { 0.f, 0.f, -2.f });
+	m_Camera.Initialize(45.0f, { 0.0f, 0.0f, -100.0f });
 
 	m_CommandPool.Init(m_Handles.GetSurface());
-	m_Texture.CreateTextureImage(m_Handles.GetGraphicsQueue(), m_CommandPool.GetCommandPool(), "resources/textures/viking_room.png");
-	m_Texture.CreateTextureSampler();
+	ResourceManager::GetInstance().Init(m_Handles.GetGraphicsQueue(), m_CommandPool.GetCommandPool(), "resources/textures/");
 
 	m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
 
@@ -38,7 +38,6 @@ void VulkanBase::Cleanup()
 	m_Handles.DestroySemaphores();
 	m_Handles.DestroyFence();
 
-	//m_VertexBuffer.Destroy(); // todo: can I put destroy in destructor?
 	m_CommandPool.DestroyCommandPool();
 	Scene::GetInstance().Destroy();
 
@@ -49,7 +48,7 @@ void VulkanBase::Cleanup()
 	m_3DShader.DestoryDescriptorSetLayout();
 	m_RenderPass.Destroy();
 
-	m_Texture.Destroy();
+	ResourceManager::GetInstance().Destroy();
 
 	m_Handles.DestroyDebugMessenger();
 	vkDestroyDevice(device, nullptr);

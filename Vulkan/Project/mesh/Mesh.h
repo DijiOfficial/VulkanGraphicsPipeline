@@ -1,22 +1,18 @@
 #pragma once
-#include <vulkan/vulkan_core.h>
-//#include <string>
-#include <memory>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include "DescriptorPool.h"
-//#include "DataBuffer.h"
-#include "Utils.h"
-#include "abstractions/DataBuffer.h"
-#include <unordered_map>
+//#include <vulkan/vulkan_core.h>
 #include "abstractions/DescriptorPool.h"
+#include "abstractions/DataBuffer.h"
+#include "textures/TextureManager.h"
+#include "Utils.h"
+#include <unordered_map>
+#include <memory>
 
 template<typename VertexType>
 class Mesh
 {
 public:
-    Mesh() = default;
-    //pass by rvalue reference
+    Mesh() : m_TextureManager(m_DescriptorPool) {  };
+    //todo: pass by rvalue reference
     explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<VertexType>& vertices, const std::vector<uint32_t>& indices)
         : m_Vertices(vertices)
         , m_Indices(indices)
@@ -35,6 +31,8 @@ public:
     void Update(uint32_t currentFrame, UniformBufferObject ubo);
     void Draw(const VkCommandBuffer& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
 
+    TextureManager& GetTextureManager() { return m_TextureManager; }
+
     //virtual void AddVertex(const glm::vec2& pos, const glm::vec3& color = { 1, 1, 1 }) = 0;
     void AddVertex(const VertexType& vertex);
     void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
@@ -48,7 +46,8 @@ protected:
     std::vector<VertexType> m_Vertices = {};
     std::vector<uint32_t> m_Indices = {};
 
-    //could be in Scene class for less overhead and memory usage
+    TextureManager m_TextureManager;
+    //could be in Scene class for less overhead and memory usage but no unique textures
     DescriptorPool m_DescriptorPool;
 };
 
