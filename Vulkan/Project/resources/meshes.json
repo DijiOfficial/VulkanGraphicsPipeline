@@ -1,0 +1,41 @@
+{
+  "data": [
+    {
+      "type": "3D",
+      "shape": "object",
+      "path": "resources/obj/vehicle.obj",
+      "textures": {
+        "albedo": "vehicle_diffuse.png",
+        "normal": "vehicle_normal.png",
+        "gloss": "vehicle_gloss.png",
+        "specular": "vehicle_specular.png"
+      },
+      "rotationPerSecond": [ 0, 90, 0 ],
+      "position": [ 0, 0, 0 ]
+    },
+    {
+      "type": "3D",
+      "shape": "object",
+      "path": "resources/obj/fireFX.obj",
+      "textures": {
+        "albedo": "fireFX_diffuse.png"
+      },
+      "rotationPerSecond": [ 0, 90, 0 ],
+      "position": [ 0, -10, 50 ]
+    },
+    {
+      "type": "3D",
+      "shape": "sphere",
+      "position": [ 12, 0, 12 ],
+      "radius": 3,
+      "sectorCount": 36,
+      "stackCount": 18
+    },
+    {
+      "type": "3D",
+      "shape": "cube",
+      "position": [3, 0, 5] ,
+      "size": 10
+    }
+  ]
+}

@@ -37,7 +37,8 @@ private:
     MeshLoader m_MeshLoader{};
 
     void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    
+    void JSONParser();
+
     template <typename Vertex>
     Mesh<Vertex>* AddMesh()
     {

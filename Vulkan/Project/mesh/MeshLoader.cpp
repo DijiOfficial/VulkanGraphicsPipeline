@@ -46,7 +46,63 @@ void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool t
     }    
 }
 
-void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius, int sectorCount, int stackCount)
+void MeshLoader::LoadCube(Mesh<Vertex3D>* mesh, const glm::vec3& center, float sideLength)
+{
+    const float halfSide = sideLength / 2.0f;
+
+    // Define the 8 vertices of the cube
+    std::vector<glm::vec3> cubeVertices = {
+        { -halfSide, -halfSide, -halfSide }, // 0
+        {  halfSide, -halfSide, -halfSide }, // 1
+        {  halfSide,  halfSide, -halfSide }, // 2
+        { -halfSide,  halfSide, -halfSide }, // 3
+        { -halfSide, -halfSide,  halfSide }, // 4
+        {  halfSide, -halfSide,  halfSide }, // 5
+        {  halfSide,  halfSide,  halfSide }, // 6
+        { -halfSide,  halfSide,  halfSide }  // 7
+    };
+
+    // Define the 6 faces of the cube (each face is two triangles)
+    std::vector<std::vector<int>> cubeIndices = {
+        {0, 1, 2, 2, 3, 0}, // Front face
+        {4, 7, 6, 6, 5, 4}, // Back face
+        {2, 6, 7, 7, 3, 2}, // Bottom face
+        {0, 4, 5, 5, 1, 0}, // Top face
+        {0, 3, 7, 7, 4, 0}, // Left face
+        {1, 5, 6, 6, 2, 1}  // Right face
+    };
+
+    // Define face normals
+    std::vector<glm::vec3> faceNormals = {
+        {0, 0, -1}, // Front
+        {0, 0, 1},  // Back
+        {0, 1, 0}, // Bottom
+        {0, -1, 0},  // Top
+        {-1, 0, 0}, // Left
+        {1, 0, 0}   // Right
+    };
+    // Add vertices and faces to the mesh
+    std::vector<Vertex3D> vertices;
+    for (size_t i = 0; i < 8; ++i)
+    {
+        Vertex3D vertex{};
+        vertex.m_Pos = center + cubeVertices[i];
+        vertex.m_Color = { 1.0f, 1.0f, 1.0f };
+
+        vertices.push_back(vertex);
+    }
+
+    for (size_t i = 0; i < cubeIndices.size(); i++)
+    {
+        for (int index : cubeIndices[i])
+        {
+            vertices[index].m_Normal = faceNormals[i];
+            mesh->AddVertex(vertices[index]);
+        }
+    }
+}
+
+void MeshLoader::LoadSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius, int sectorCount, int stackCount)
 {
     const auto PI = glm::pi<float>();
     const float sectorStep = 2 * PI / sectorCount;
@@ -63,8 +119,8 @@ void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center,
             const float x = xy * cosf(sectorAngle);
             const float y = xy * sinf(sectorAngle);
             Vertex3D vertex{};
-            vertex.m_Pos = { x , y , z };
-            vertex.m_Normal = glm::normalize(vertex.m_Pos);
+            vertex.m_Pos = center + glm::vec3{ x , y , z };
+            vertex.m_Normal = glm::normalize(glm::vec3{ x , y , z });
             vertex.m_Color = { 1.0f, 1.0f, 1.0f };
             Vertices.push_back(vertex);
         }

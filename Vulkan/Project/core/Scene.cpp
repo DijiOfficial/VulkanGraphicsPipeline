@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include <glm/gtc/constants.hpp>
 #include "textures/TextureManager.h"
+#include "lib/json.hpp"
+#include <fstream>
 
 void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio)
 {
@@ -65,9 +67,13 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
 
     //mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 
-    const auto& sphere = AddMesh<Vertex3D>();
-    m_MeshLoader.InitializeSphere(sphere, glm::vec3{3,0,5}, 1);
-    sphere->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+    //const auto& cube = AddMesh<Vertex3D>();
+    //m_MeshLoader.LoadCube(cube, glm::vec3{ 3,12,5 }, 12);
+    //cube->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+
+    JSONParser();
+
+    
 }
 
 void Scene::Destroy()
@@ -170,6 +176,62 @@ void Scene::CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, floa
     mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
     mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } });
     mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
+}
+
+void Scene::JSONParser()
+{
+    std::ifstream file("resources/meshes.json");
+    nlohmann::json data = nlohmann::json::parse(file);
+
+    for (const auto& meshData : data["data"])
+    {
+        std::string type = meshData["type"];
+        std::string shape = meshData["shape"];
+        if (type == "2D")
+        {
+            continue;
+			//auto& mesh2D = AddMesh<Vertex2D>();
+   //         for (const auto& vertex : mesh["vertices"])
+   //         {
+			//	mesh2D.AddVertex(Vertex2D{ { vertex["position"][0], vertex["position"][1] }, { vertex["color"][0], vertex["color"][1], vertex["color"][2] } });
+			//}
+			//mesh2D.AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
+		}
+        else if (type == "3D")
+        {
+			const auto& mesh = AddMesh<Vertex3D>();
+            if (shape == "cube")
+            {
+                m_MeshLoader.LoadCube(mesh, glm::vec3{ meshData["position"][0], meshData["position"][1], meshData["position"][2]}, meshData["size"]);
+            }
+            else if (shape == "sphere")
+            {
+                const int sectorCount =  meshData.contains("sectorCount") ? meshData["sectorCount"] : 36;
+                const int stackCount =   meshData.contains("stackCount")  ? meshData["stackCount"]  : 18;
+                
+                m_MeshLoader.LoadSphere(mesh, glm::vec3{ meshData["position"][0], meshData["position"][1], meshData["position"][2] }, meshData["radius"], sectorCount, stackCount);
+            }
+            else if (shape == "object")
+            {
+                m_MeshLoader.LoadModel(mesh, meshData["path"], true);
+                if (meshData.contains("textures"))
+                {
+                    if (meshData["textures"].contains("albedo"))
+                        mesh->GetTextureManager().UploadAlbedoTexture(m_GraphicsQueue, m_CommandPool, meshData["textures"]["albedo"]);
+                    if (meshData["textures"].contains("normal"))
+                    {
+                        mesh->GetTextureManager().UploadNormalTexture(m_GraphicsQueue, m_CommandPool, meshData["textures"]["normal"]);
+                        mesh->SetHasNormalMap();
+                    }
+                    if (meshData["textures"].contains("gloss"))
+                        mesh->GetTextureManager().UploadGlossTexture(m_GraphicsQueue, m_CommandPool, meshData["textures"]["gloss"]);
+                    if (meshData["textures"].contains("specular"))
+                        mesh->GetTextureManager().UploadSpecularTexture(m_GraphicsQueue, m_CommandPool, meshData["textures"]["specular"]);
+                }
+            }
+            mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+		}
+	}
 }
 
 void Scene::CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments)

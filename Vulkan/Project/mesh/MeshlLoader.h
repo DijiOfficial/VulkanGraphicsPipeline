@@ -24,8 +24,8 @@ public:
 
 
     void LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool triangulate);
-    //static void InitializeCube(Mesh3D& mesh, const glm::vec3& bottomLeftBackCorner, float sideLength);
-    void InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius, int sectorCount = 36, int stackCount = 18);
+    void LoadCube(Mesh<Vertex3D>* mesh, const glm::vec3& center, float size);
+    void LoadSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius, int sectorCount = 36, int stackCount = 18);
 
     //static void InitializeCircle(Mesh2D& mesh, const glm::vec2& center, float radius, int nrOfSegments);
     //static void InitializeRect(Mesh2D& mesh, const glm::vec2& bottomLeft, float sideLen);
