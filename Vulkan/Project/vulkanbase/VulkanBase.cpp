@@ -133,9 +133,7 @@ void VulkanBase::DrawFrame()
 		&m_Camera.GetPosition() // Pointer to the data
 	);
 
-	//vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), GraphicsPipeline::GetPipelineLayout(),
-	//	VK_SHADER_STAGE_FRAGMENT_BIT,
-	//	sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_ShadingMode);
+	vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), m_3DGraphicsPipeline.GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_RenderMode.GetRenderMode());
 
 
 	//todo make scene a member variable

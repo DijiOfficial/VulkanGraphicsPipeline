@@ -55,7 +55,7 @@ void GraphicsPipeline::CreateGraphicsPipeline(VulkanShader& shader, const VkRend
 	VkPushConstantRange pushConstantRange = {};
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT; // Stage the push constant is accessible from
 	pushConstantRange.offset = 0;
-	pushConstantRange.size = sizeof(glm::vec3) + sizeof(int); // Size of push constant block
+	pushConstantRange.size = sizeof(glm::vec3) + sizeof(int) * 2; // Size of push constant block
 	
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

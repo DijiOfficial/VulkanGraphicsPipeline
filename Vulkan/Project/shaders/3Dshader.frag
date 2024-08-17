@@ -1,6 +1,11 @@
 #version 450
 
 //globals
+#define LAMBERT 0
+#define NORMAL 1
+#define SPECULAR 2
+#define COMBINED 3
+
 const vec3 lightDirection = vec3(0.577f, -0.577f, 0.577f);
 const vec3 AMBIENT = vec3(0.03f, 0.03f, 0.03f);
 const float SHININESS = 25.0f;
@@ -10,10 +15,9 @@ const float PI = 3.1415927f;
 layout(push_constant) uniform PushConstants{
     vec3 cameraPos;
     int hasNormalMap;
+    int shadingMode;
 } pushConstants;
 
-//do I still need fragColor? in 3D meshes since I sample from a default texture anyways
-layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragNormal;
 layout(location = 3) in vec3 fragTangent;
@@ -76,13 +80,22 @@ void main()
 	}
     const vec3 BRDF = Lambert + Phong + AMBIENT;
 
-    const vec3 finalColor = MaxToOne(BRDF * observedArea);
-    //const vec3 finalColor = MaxToOne(observedArea * vec3(1.f, 1.f, 1.f));
-    //const vec3 finalColor = MaxToOne(Lambert * observedArea);
-    //const vec3 finalColor = MaxToOne(Phong * observedArea);
-
-    //const vec3 finalColor = MaxToOne(-viewDirection);
+    vec3 finalColor;
+    switch (pushConstants.shadingMode)
+    {
+        case LAMBERT:
+			finalColor = Lambert * observedArea;
+			break;
+		case NORMAL:
+			finalColor = normal;
+			break;
+		case SPECULAR:
+			finalColor = Phong * observedArea;
+			break;
+		case COMBINED:
+			finalColor = BRDF * observedArea;
+			break;
+    }
     
     outColor = vec4(finalColor, 1.0);
-    //outColor = texture(texSampler, fragTexCoord);
 }

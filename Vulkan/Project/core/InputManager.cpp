@@ -30,6 +30,13 @@ void InputManager::Init(GLFWwindow* window)
 		});
 }
 
+std::vector<int> InputManager::GetReleasedKeys()
+{
+	std::vector<int> keys = m_ReleasedKeys;
+	m_ReleasedKeys.clear();
+	return keys;
+}
+
 bool InputManager::IsMouseIdle() const
 {
 	auto now = std::chrono::steady_clock::now();
@@ -43,7 +50,10 @@ void InputManager::KeyEvent(int key, int scancode, int action, int mods)
 	if (action == GLFW_PRESS)
 		m_PressedKeys.insert(key);
 	else if (action == GLFW_RELEASE)
+	{
 		m_PressedKeys.erase(key);
+		m_ReleasedKeys.push_back(key);
+	}
 }
 
 void InputManager::MouseMove(GLFWwindow* window, double xpos, double ypos)

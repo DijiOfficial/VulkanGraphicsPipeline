@@ -8,6 +8,7 @@
 #include "core/Camera.h"
 #include "core/TimeSingleton.h"
 #include <chrono>
+#include "core/RenderMode.h"
 
 class VulkanBase {
 public:
@@ -38,6 +39,7 @@ private:
 
 			glfwPollEvents();
 
+			m_RenderMode.Update();
 			m_Camera.Update();
 			DrawFrame();
 		}
@@ -54,6 +56,7 @@ private:
 	GraphicsPipeline m_3DGraphicsPipeline{};
 	Handles m_Handles{};
 	Camera m_Camera{};
+	RenderOptions m_RenderMode{};
 
 	void InitWindow();
 	void DrawFrame(uint32_t imageIndex);
