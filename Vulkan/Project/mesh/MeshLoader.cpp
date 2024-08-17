@@ -29,27 +29,20 @@ void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool t
             const glm::vec3 deltaPos2 = vertex2.m_Pos - vertex0.m_Pos;
 
             // UV delta
-            const glm::vec2 deltaUV1 = vertex1.m_TexCoord - vertex0.m_TexCoord;
-            const glm::vec2 deltaUV2 = vertex2.m_TexCoord - vertex0.m_TexCoord;
+            const glm::vec2 diffX = glm::vec2(vertex1.m_TexCoord.x - vertex0.m_TexCoord.x, vertex2.m_TexCoord.x - vertex0.m_TexCoord.x);
+            const glm::vec2 diffY = glm::vec2(vertex1.m_TexCoord.y - vertex0.m_TexCoord.y, vertex2.m_TexCoord.y - vertex0.m_TexCoord.y);
+            float r = 1.0f / (diffX.x * diffY.y - diffY.x * diffX.y);
 
-            // Calculate the tangent
-            const float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-            glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
-
-            // Gram-Schmidt orthogonalize tangent with respect to normal
-            tangent = glm::normalize(tangent - vertex0.m_Normal * glm::dot(vertex0.m_Normal, tangent));
-            tangent.z *= -1;
-
-            // Store the tangent for each vertex of the triangle
-            vertex0.m_Tangent = tangent;
-            vertex1.m_Tangent = tangent;
-            vertex2.m_Tangent = tangent;
+            glm::vec3 tangent = (deltaPos1 * diffY.y - deltaPos2 * diffY.x) * r;
+            vertex0.m_Tangent += glm::normalize(Reject(tangent, vertex0.m_Normal));
+            vertex1.m_Tangent += glm::normalize(Reject(tangent, vertex1.m_Normal));
+            vertex2.m_Tangent += glm::normalize(Reject(tangent, vertex2.m_Normal));
 
             mesh->AddVertex(vertex0);
             mesh->AddVertex(vertex1);
             mesh->AddVertex(vertex2);
         }
-    }
+    }    
 }
 
 void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius)

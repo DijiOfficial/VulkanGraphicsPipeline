@@ -26,7 +26,7 @@ void Mesh<VertexType>::Update(uint32_t currentFrame, UniformBufferObject ubo)
 	const float time = diji::TimeSingleton::GetInstance().GetDeltaTime();
 	m_ElapsedTime += time;
 	//todo: create Rotation class?
-	ubo.model = glm::rotate(glm::mat4(1.0f), m_ElapsedTime * glm::radians(90.0f), Camera::UP);
+	ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(m_ElapsedTime * 90.0f), Camera::UP);
 
 	m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
 }
@@ -37,6 +37,16 @@ void Mesh<VertexType>::Draw(const VkCommandBuffer& commandBuffer, const VkPipeli
 	if (!m_IsAllocated) return;
 
 	BindBuffers(commandBuffer);
+
+	//vkCmdPushConstants(
+	//	commandBuffer,
+	//	pipelineLayout,
+	//	VK_SHADER_STAGE_VERTEX_BIT, // Stage flag should match the push constant range in the layout
+	//	0, // Offset within the push constant block
+	//	sizeof(MeshData), // Size of the push constants to update
+	//	&m_VertexConstant // Pointer to the data
+	//	);
+
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_DescriptorPool.GetDescriptorSets(currentFrame), 0, nullptr);
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);

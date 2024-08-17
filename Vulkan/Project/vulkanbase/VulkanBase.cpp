@@ -122,12 +122,17 @@ void VulkanBase::DrawFrame()
 	uint32_t imageIndex;
 	vkAcquireNextImageKHR(device, m_RenderPass.GetSwapChain(), UINT64_MAX, m_Handles.GetImageAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex);
 
-	//vkResetCommandBuffer(commandBuffer, /*VkCommandBufferResetFlagBits*/ 0);
-	//RecordCommandBuffer(commandBuffer, imageIndex);
 	m_CommandBuffer.Reset();
 	m_CommandBuffer.BeginFrame();
-	//vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), GraphicsPipeline::GetPipelineLayout(),
-	//	VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec3), &m_Camera.m_Origin);
+
+	vkCmdPushConstants(
+		m_CommandBuffer.GetVkCommandBuffer(), m_3DGraphicsPipeline.GetPipelineLayout(),
+		VK_SHADER_STAGE_FRAGMENT_BIT, // Stage flag should match the push constant range in the layout
+		0, // Offset within the push constant block
+		sizeof(glm::vec3), // Size of the push constants to update
+		&m_Camera.GetPosition() // Pointer to the data
+	);
+
 	//vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), GraphicsPipeline::GetPipelineLayout(),
 	//	VK_SHADER_STAGE_FRAGMENT_BIT,
 	//	sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_ShadingMode);

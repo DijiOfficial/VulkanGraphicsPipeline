@@ -33,13 +33,17 @@ void DescriptorPool::UpdateUniformBuffer(uint32_t currentFrame, UniformBufferObj
 
 void DescriptorPool::CreateDescriptorPool()
 {
-    std::array<VkDescriptorPoolSize, 3> poolSizes{};
+    std::array<VkDescriptorPoolSize, 5> poolSizes{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
     poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[3].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[3].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[4].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[4].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -93,7 +97,17 @@ void DescriptorPool::ConfigureDescriptors(size_t idx)
     normalMapInfo.imageView = m_NormalImageView;
     normalMapInfo.sampler = textureSampler;
 
-    std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
+    VkDescriptorImageInfo glossImageInfo{};
+    glossImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    glossImageInfo.imageView = m_GlossImageView;
+    glossImageInfo.sampler = textureSampler;
+
+    VkDescriptorImageInfo specularImageInfo{};
+    specularImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    specularImageInfo.imageView = m_SpecularImageView;
+    specularImageInfo.sampler = textureSampler;
+
+    std::array<VkWriteDescriptorSet, 5> descriptorWrites{};
 
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[0].dstSet = m_DescriptorSetsVec[idx];
@@ -119,20 +133,23 @@ void DescriptorPool::ConfigureDescriptors(size_t idx)
     descriptorWrites[2].descriptorCount = 1;
     descriptorWrites[2].pImageInfo = &normalMapInfo;
 
+    descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[3].dstSet = m_DescriptorSetsVec[idx];
+    descriptorWrites[3].dstBinding = 3;
+    descriptorWrites[3].dstArrayElement = 0;
+    descriptorWrites[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrites[3].descriptorCount = 1;
+    descriptorWrites[3].pImageInfo = &glossImageInfo;
+
+    descriptorWrites[4].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[4].dstSet = m_DescriptorSetsVec[idx];
+    descriptorWrites[4].dstBinding = 4;
+    descriptorWrites[4].dstArrayElement = 0;
+    descriptorWrites[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrites[4].descriptorCount = 1;
+    descriptorWrites[4].pImageInfo = &specularImageInfo;
+
     vkUpdateDescriptorSets(VulkanBase::device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-
-    VkWriteDescriptorSet descriptorWrite{};
-    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = m_DescriptorSetsVec[idx];
-    descriptorWrite.dstBinding = 0;
-    descriptorWrite.dstArrayElement = 0;
-    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorWrite.descriptorCount = 1;
-    descriptorWrite.pBufferInfo = &bufferInfo;
-    descriptorWrite.pImageInfo = nullptr; // Optional
-    descriptorWrite.pTexelBufferView = nullptr; // Optional
-    vkUpdateDescriptorSets(VulkanBase::device, 1, &descriptorWrite, 0, nullptr);
-
 }
 
 void DescriptorPool::CreateUniformBuffers(const VkCommandPool& commandPool, const VkQueue& graphicsQueue)

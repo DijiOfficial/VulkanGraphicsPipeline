@@ -16,14 +16,17 @@ layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
 layout(location = 3) out vec3 fragTangent;
+layout(location = 4) out vec3 fragPosition;
 
 void main() {
     gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
+    fragPosition = gl_Position.xyz;
+
     const vec4 tNormal =  ubo.model * vec4(inNormal,0);
     fragNormal = normalize(tNormal.xyz); // interpolation of normal attribute in fragment shader.
     
-    const vec4 tan =  ubo.model * vec4(inTangent,0);
-    fragTangent = normalize(tan.xyz);
+    const vec4 tangent =  ubo.model * vec4(inTangent,0);
+    fragTangent = normalize(tangent.xyz);
 
     fragColor = inColor;
     fragTexCoord = inTexCoord;

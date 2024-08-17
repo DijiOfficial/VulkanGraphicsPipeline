@@ -69,8 +69,21 @@ void VulkanShader::CreateDescriptorSetLayout()
 	normalSamplerLayoutBinding.pImmutableSamplers = nullptr;
 	normalSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	//std::array<VkDescriptorSetLayoutBinding, 5> bindings = { uboLayoutBinding, samplerLayoutBinding, normalSamplerLayoutBinding, glossSamplerLayoutBinding, specularSamplerLayoutBinding };
-	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, normalSamplerLayoutBinding };
+	VkDescriptorSetLayoutBinding glossSamplerLayoutBinding{};
+	glossSamplerLayoutBinding.binding = 3;
+	glossSamplerLayoutBinding.descriptorCount = 1;
+	glossSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	glossSamplerLayoutBinding.pImmutableSamplers = nullptr;
+	glossSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	VkDescriptorSetLayoutBinding specularSamplerLayoutBinding{};
+	specularSamplerLayoutBinding.binding = 4;
+	specularSamplerLayoutBinding.descriptorCount = 1;
+	specularSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	specularSamplerLayoutBinding.pImmutableSamplers = nullptr;
+	specularSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	std::array<VkDescriptorSetLayoutBinding, 5> bindings = { uboLayoutBinding, samplerLayoutBinding, normalSamplerLayoutBinding, glossSamplerLayoutBinding, specularSamplerLayoutBinding };
 	VkDescriptorSetLayoutCreateInfo layoutInfo{};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());

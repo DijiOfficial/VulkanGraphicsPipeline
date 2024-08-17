@@ -18,8 +18,8 @@ public:
 
     void UploadAlbedoTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
     void UploadNormalTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
-    //void UploadGlossTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
-    //void UploadSpecularTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
+    void UploadGlossTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
+    void UploadSpecularTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
 
 private:
     Texture* m_AlbedoTexture{};

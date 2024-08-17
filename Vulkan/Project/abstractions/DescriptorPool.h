@@ -22,8 +22,8 @@ public:
     const VkDescriptorSet& GetDescriptorSets(uint32_t idx) const { return m_DescriptorSetsVec[idx]; };
     void SetAlbedo(const VkImageView& imageView) { m_AlbedoImageView = imageView; };
     void SetNormal(const VkImageView& imageView) { m_NormalImageView = imageView; };
-    //void SetGloss(const VkImageView& imageView) { m_GlossImageView = imageView; };
-    //void SetSpecular(const VkImageView& imageView) { m_SpecularImageview = imageview; };
+    void SetGloss(const VkImageView& imageView) { m_GlossImageView = imageView; };
+    void SetSpecular(const VkImageView& imageView) { m_SpecularImageView = imageView; };
 
 private:
     std::vector<void*> m_UniformBuffersMapped;
@@ -33,8 +33,8 @@ private:
 
     VkImageView m_AlbedoImageView;
     VkImageView m_NormalImageView;
-    //VkImageView m_GlossImageView;
-    //VkImageView m_SpecularImageView;
+    VkImageView m_GlossImageView;
+    VkImageView m_SpecularImageView;
 
     void CreateDescriptorPool();
     void CreateDescriptorSets(const VkDescriptorSetLayout& descriptorSetLayout);

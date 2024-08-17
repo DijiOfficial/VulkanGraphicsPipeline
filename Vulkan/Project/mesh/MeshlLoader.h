@@ -34,7 +34,6 @@ public:
     //static void LoadModelNoTan(Mesh3D& mesh, const std::string& path, bool triangulate);
 
 private:
-    //static glm::vec3 Reject(const glm::vec3& a, const glm::vec3& b);
     Vertex3D CreateVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index);
     //static void AddRectPlane(Mesh3D& mesh, Vertex3D& bottomLeft, Vertex3D& topLeft, Vertex3D& topRight,
     //    Vertex3D& bottomRight, bool isClockWise, bool keepNormals = false);
@@ -42,4 +41,10 @@ private:
     //static void AddRect(Mesh2D& mesh, float top, float left, float bottom, float right);
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
+
+    glm::vec3 MeshLoader::Reject(const glm::vec3& a, const glm::vec3& b)
+    {
+        const glm::vec3 proj = glm::dot(a, b) / glm::dot(b, b) * b;
+        return a - proj;
+    }
 };

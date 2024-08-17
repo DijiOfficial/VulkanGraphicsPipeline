@@ -60,6 +60,9 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //m_MeshLoader.LoadModel(mesh, "resources/obj/viking_room.obj", true);
     mesh->GetTextureManager().UploadAlbedoTexture(graphicsQueue, commandPool, "vehicle_diffuse.png");
     mesh->GetTextureManager().UploadNormalTexture(graphicsQueue, commandPool, "vehicle_normal.png");
+    mesh->GetTextureManager().UploadGlossTexture(graphicsQueue, commandPool, "vehicle_gloss.png");
+    mesh->GetTextureManager().UploadSpecularTexture(graphicsQueue, commandPool, "vehicle_specular.png");
+
     mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 
     //const auto& sphere = AddMesh<Vertex3D>();
