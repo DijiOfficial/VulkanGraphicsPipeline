@@ -1,9 +1,7 @@
 #version 450
 
 //globals
-//const vec3 lightDirection = normalize(vec3(0.0, -1.0, -1.0));
 const vec3 lightDirection = vec3(0.577f, -0.577f, 0.577f);
-//const vec3 AMBIENT = vec3(0.003f, 0.003f, 0.003f);
 const vec3 AMBIENT = vec3(0.03f, 0.03f, 0.03f);
 const float SHININESS = 25.0f;
 const float KD = 7.f;
@@ -11,6 +9,7 @@ const float PI = 3.1415927f;
 
 layout(push_constant) uniform PushConstants{
     vec3 cameraPos;
+    int hasNormalMap;
 } pushConstants;
 
 //do I still need fragColor? in 3D meshes since I sample from a default texture anyways
@@ -36,21 +35,21 @@ vec3 MaxToOne(vec3 color)
 void main() 
 {
     vec3 normal;
-    //if (usingNormalMap) 
-    //{
-    const vec3 binormal = cross(fragNormal, fragTangent);
-    const mat3 tangentSpaceAxis = mat3(fragTangent, binormal, fragNormal);
-    const vec3 normalMapSample = texture(normalSampler, fragTexCoord).rgb;
-    const vec3 sampledColor = 2 * normalMapSample - vec3(1, 1, 1);
+    if (pushConstants.hasNormalMap == 1) 
+    {
+        const vec3 binormal = cross(fragNormal, fragTangent);
+        const mat3 tangentSpaceAxis = mat3(fragTangent, binormal, fragNormal);
+        const vec3 normalMapSample = texture(normalSampler, fragTexCoord).rgb;
+        const vec3 sampledColor = 2 * normalMapSample - vec3(1, 1, 1);
 
-    normal = normalize(tangentSpaceAxis * sampledColor);
-    //}
-    //else 
-    //{
-    //    normal = normalize(fragNormal);
-    //}
+        normal = normalize(tangentSpaceAxis * sampledColor);
+    }
+    else 
+    {
+        normal = normalize(fragNormal);
+    }
 
-    const float observedArea = dot(normal, -(lightDirection));
+    const float observedArea = dot(normal, -lightDirection);
     if (observedArea < 0) 
     {
         outColor = vec4(0.f, 0.f, 0.f, 1.f);

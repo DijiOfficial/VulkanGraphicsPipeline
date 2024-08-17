@@ -137,6 +137,8 @@ void VulkanBase::DrawFrame()
 	//	VK_SHADER_STAGE_FRAGMENT_BIT,
 	//	sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_ShadingMode);
 
+
+	//todo make scene a member variable
 	Scene::GetInstance().Update(m_Camera.GetInverseViewMatrix(), imageIndex);
 
 	DrawFrame(imageIndex);

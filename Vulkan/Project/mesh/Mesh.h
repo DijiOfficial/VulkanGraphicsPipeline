@@ -37,9 +37,11 @@ public:
     void AddVertex(const VertexType& vertex);
     void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
     void BindBuffers(const VkCommandBuffer& commandBuffer) const;
+    void SetHasNormalMap() { m_HasNormalMap = 1; }
 
 protected:
     bool m_IsAllocated = false;
+    int m_HasNormalMap = 0;
     float m_ElapsedTime = 0.f;
 
     std::unique_ptr<DataBuffer> m_VertexBuffer{};

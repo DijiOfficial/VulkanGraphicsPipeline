@@ -3,6 +3,7 @@
 #include <tiny_obj_loader.h>
 #include "Mesh.h"
 #include <stdexcept>
+#include <glm/ext/scalar_constants.hpp>
 
 void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool triangulate)
 {
@@ -45,32 +46,27 @@ void MeshLoader::LoadModel(Mesh<Vertex3D>* mesh, const std::string& path, bool t
     }    
 }
 
-void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius)
+void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float radius, int sectorCount, int stackCount)
 {
-    //mesh.ClearIndices();
-    //mesh.ClearVertices();
-    //mesh->GetTransform().Translate(center);
-    constexpr int sectorCount = 36;
-    constexpr int stackCount = 18;
     const auto PI = glm::pi<float>();
     const float sectorStep = 2 * PI / sectorCount;
     const float stackStep = PI / stackCount;
-    std::vector<Vertex3D> tempVertices;
+    std::vector<Vertex3D> Vertices;
     for (int i = 0; i <= stackCount; ++i)
     {
-        float stackAngle = PI / 2 - i * stackStep;
-        float xy = radius * cosf(stackAngle);
-        float z = radius * sinf(stackAngle);
+        const float stackAngle = PI / 2 - i * stackStep;
+        const float xy = radius * cosf(stackAngle);
+        const float z = radius * sinf(stackAngle);
         for (int j = 0; j <= sectorCount; ++j)
         {
-            float sectorAngle = j * sectorStep;
-            float x = xy * cosf(sectorAngle);
-            float y = xy * sinf(sectorAngle);
+            const float sectorAngle = j * sectorStep;
+            const float x = xy * cosf(sectorAngle);
+            const float y = xy * sinf(sectorAngle);
             Vertex3D vertex{};
             vertex.m_Pos = { x , y , z };
-            //vertex.m_Normal = glm::normalize(vertex.m_Pos);
+            vertex.m_Normal = glm::normalize(vertex.m_Pos);
             vertex.m_Color = { 1.0f, 1.0f, 1.0f };
-            tempVertices.push_back(vertex);
+            Vertices.push_back(vertex);
         }
     }
     for (int i = 0; i < stackCount; ++i)
@@ -81,15 +77,15 @@ void MeshLoader::InitializeSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center,
         {
             if (i != 0)
             {
-                mesh->AddVertex(tempVertices[k1]);
-                mesh->AddVertex(tempVertices[k1 + 1]);
-                mesh->AddVertex(tempVertices[k2]);
+                mesh->AddVertex(Vertices[k1]);
+                mesh->AddVertex(Vertices[k1 + 1]);
+                mesh->AddVertex(Vertices[k2]);
             }
             if (i != (stackCount - 1))
             {
-                mesh->AddVertex(tempVertices[k1 + 1]);
-                mesh->AddVertex(tempVertices[k2 + 1]);
-                mesh->AddVertex(tempVertices[k2]);
+                mesh->AddVertex(Vertices[k1 + 1]);
+                mesh->AddVertex(Vertices[k2 + 1]);
+                mesh->AddVertex(Vertices[k2]);
             }
         }
     }

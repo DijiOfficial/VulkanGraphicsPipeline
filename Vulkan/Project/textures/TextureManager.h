@@ -14,8 +14,6 @@ public:
     TextureManager& operator=(const TextureManager& other) = delete;
     TextureManager& operator=(TextureManager&& other) = delete;
 
-    //int m_HasNormalMap = 0;
-
     void UploadAlbedoTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
     void UploadNormalTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);
     void UploadGlossTexture(const VkQueue& graphicsQueue, const VkCommandPool& commandPool, const std::string& path);

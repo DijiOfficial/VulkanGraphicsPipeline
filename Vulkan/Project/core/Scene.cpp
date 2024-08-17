@@ -55,19 +55,19 @@ void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue,
     //CreateCircle({0.0f, 0.0f}, 0.5f, 0.5f, 32);
     //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
 
-    const auto& mesh = AddMesh<Vertex3D>();
-    m_MeshLoader.LoadModel(mesh, "resources/obj/vehicle.obj", true);
-    //m_MeshLoader.LoadModel(mesh, "resources/obj/viking_room.obj", true);
-    mesh->GetTextureManager().UploadAlbedoTexture(graphicsQueue, commandPool, "vehicle_diffuse.png");
-    mesh->GetTextureManager().UploadNormalTexture(graphicsQueue, commandPool, "vehicle_normal.png");
-    mesh->GetTextureManager().UploadGlossTexture(graphicsQueue, commandPool, "vehicle_gloss.png");
-    mesh->GetTextureManager().UploadSpecularTexture(graphicsQueue, commandPool, "vehicle_specular.png");
+    //const auto& mesh = AddMesh<Vertex3D>();
+    //m_MeshLoader.LoadModel(mesh, "resources/obj/vehicle.obj", true);
+    //mesh->GetTextureManager().UploadAlbedoTexture(graphicsQueue, commandPool, "vehicle_diffuse.png");
+    //mesh->GetTextureManager().UploadNormalTexture(graphicsQueue, commandPool, "vehicle_normal.png");
+    //mesh->SetHasNormalMap();
+    //mesh->GetTextureManager().UploadGlossTexture(graphicsQueue, commandPool, "vehicle_gloss.png");
+    //mesh->GetTextureManager().UploadSpecularTexture(graphicsQueue, commandPool, "vehicle_specular.png");
 
-    mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+    //mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 
-    //const auto& sphere = AddMesh<Vertex3D>();
-    //m_MeshLoader.InitializeSphere(sphere, glm::vec3{3,0,5}, 1);
-    //sphere->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+    const auto& sphere = AddMesh<Vertex3D>();
+    m_MeshLoader.InitializeSphere(sphere, glm::vec3{3,0,5}, 1);
+    sphere->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
 }
 
 void Scene::Destroy()
