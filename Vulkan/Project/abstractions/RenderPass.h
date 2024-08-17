@@ -25,7 +25,6 @@ public:
 	SwapChain& operator=(SwapChain&& other) = delete;
 
 	void CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window, VkExtent2D& swapChainExtent);
-	//void CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window, const QueueFamilyIndices& indices);
 	void Destroy();
 
 	VkSwapchainKHR& GetSwapChain() { return m_SwapChain; }

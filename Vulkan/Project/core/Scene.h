@@ -1,11 +1,18 @@
 #pragma once
-#include "Singleton.h"
 #include "mesh/Mesh.h"
 #include "mesh/MeshlLoader.h"
 
-class Scene final : public Singleton<Scene>
+class Scene final
 {
 public:
+    Scene() = default;
+    ~Scene() = default;
+
+    Scene(const Scene& other) = delete;
+    Scene(Scene&& other) = delete;
+    Scene& operator=(const Scene& other) = delete;
+    Scene& operator=(Scene&& other) = delete;
+
     void Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio);
 	void Destroy();
 
@@ -14,16 +21,6 @@ public:
 
     void Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
     void Draw3DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
-
-    void CreateCircle(const glm::vec2& center, float r1, float r2, int nrOfSegments);
-
-    void CreateRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    void CreateRectangle(const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    void CreateRectangle(float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-
-    void CreateRoundedRectangle(const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
-    void CreateRoundedRectangle(float left, float bottom, float width, float height, float radius, int nrOfSegments);
-
 private:
     std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;
     std::vector<std::unique_ptr<Mesh<Vertex3D>>> m_Meshes3D;
@@ -36,8 +33,7 @@ private:
     UniformBufferObject m_3DUniformBufferObject{};
     MeshLoader m_MeshLoader{};
 
-    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    void JSONParser();
+    void LoadScene();
 
     template <typename Vertex>
     Mesh<Vertex>* AddMesh()

@@ -19,7 +19,6 @@ void VulkanBase::InitVulkan()
 	m_RenderPass.CreateFrameBuffers();
 
 	m_Camera.SetAspectRatio(m_RenderPass.GetAspectRatio());
-	//m_Camera.Initialize(45.f, { 0.f, 0.f, -2.f });
 	m_Camera.Initialize(45.0f, { 0.0f, 0.0f, -100.0f });
 
 	m_CommandPool.Init(m_Handles.GetSurface());
@@ -27,8 +26,8 @@ void VulkanBase::InitVulkan()
 
 	m_CommandBuffer.InitCommandBuffer(m_CommandPool.GetCommandPool());
 
-	Scene::GetInstance().Add3DDescriptorLayout(m_3DShader.GetDescriptorSetLayout());
-	Scene::GetInstance().Init(m_CommandPool.GetCommandPool(), m_Handles.GetGraphicsQueue(), m_GradientShader.GetDescriptorSetLayout(), m_Camera.GetProjectionMatrix(), m_RenderPass.GetAspectRatio());
+	m_Scene.Add3DDescriptorLayout(m_3DShader.GetDescriptorSetLayout());
+	m_Scene.Init(m_CommandPool.GetCommandPool(), m_Handles.GetGraphicsQueue(), m_GradientShader.GetDescriptorSetLayout(), m_Camera.GetProjectionMatrix(), m_RenderPass.GetAspectRatio());
 
 	m_Handles.InitializeSyncObjects();
 }
@@ -39,7 +38,7 @@ void VulkanBase::Cleanup()
 	m_Handles.DestroyFence();
 
 	m_CommandPool.DestroyCommandPool();
-	Scene::GetInstance().Destroy();
+	m_Scene.Destroy();
 
 	m_GraphicsPipeline.Destroy();
 	m_3DGraphicsPipeline.Destroy();
@@ -106,10 +105,10 @@ void VulkanBase::DrawFrame(uint32_t imageIndex)
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline.GetGraphicsPipeline());
-	Scene::GetInstance().Draw2DMeshes(commandBuffer, m_GraphicsPipeline.GetPipelineLayout(), imageIndex);
+	m_Scene.Draw2DMeshes(commandBuffer, m_GraphicsPipeline.GetPipelineLayout(), imageIndex);
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_3DGraphicsPipeline.GetGraphicsPipeline());
-	Scene::GetInstance().Draw3DMeshes(commandBuffer, m_3DGraphicsPipeline.GetPipelineLayout(), imageIndex);
+	m_Scene.Draw3DMeshes(commandBuffer, m_3DGraphicsPipeline.GetPipelineLayout(), imageIndex);
 
 	vkCmdEndRenderPass(commandBuffer);
 }
@@ -135,9 +134,7 @@ void VulkanBase::DrawFrame()
 
 	vkCmdPushConstants(m_CommandBuffer.GetVkCommandBuffer(), m_3DGraphicsPipeline.GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(glm::vec3) + sizeof(int), sizeof(int), &m_RenderMode.GetRenderMode());
 
-
-	//todo make scene a member variable
-	Scene::GetInstance().Update(m_Camera.GetInverseViewMatrix(), imageIndex);
+	m_Scene.Update(m_Camera.GetInverseViewMatrix(), imageIndex);
 
 	DrawFrame(imageIndex);
 	m_CommandBuffer.EndFrame();

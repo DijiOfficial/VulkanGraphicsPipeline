@@ -147,6 +147,81 @@ void MeshLoader::LoadSphere(Mesh<Vertex3D>* mesh, const glm::vec3& center, float
     }
 }
 
+
+void MeshLoader::CreateCircle(Mesh<Vertex2D>* mesh, const glm::vec2& center, float r1, float r2, int nrOfSegments)
+{
+    const float step = 2.0f * glm::pi<float>() / static_cast<float>(nrOfSegments);
+
+    for (int i = 0; i < nrOfSegments; ++i)
+    {
+        const float theta1 = i * step;
+        const float theta2 = (i + 1) * step;
+
+        const glm::vec2 p1 = center + glm::vec2(r1 * cos(theta1), r2 * sin(theta1));
+        const glm::vec2 p2 = center + glm::vec2(r1 * cos(theta2), r2 * sin(theta2));
+
+        mesh->AddVertex(Vertex2D{ center, { 1.0f, 1.0f, 1.0f } });
+        mesh->AddVertex(Vertex2D{ p1, { 1.0f, 0.0f, 0.0f } });
+        mesh->AddVertex(Vertex2D{ p2, { 1.0f, 0.0f, 0.0f } });
+    }
+}
+
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color)
+{
+    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, size.x, size.y, color);
+}
+
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color)
+{
+    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, width, height, color);
+}
+
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
+{
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
+
+    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } });
+    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
+}
+
+void MeshLoader::CreateRoundedRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments)
+{
+    CreateRoundedRectangle(mesh, bottomLeft.x, bottomLeft.y, size.x, size.y, radius, nrOfSegments);
+}
+
+void MeshLoader::CreateRoundedRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, float radius, int nrOfSegments)
+{
+    CreateRectangle(mesh, left + radius, bottom, width - 2 * radius, height);
+    CreateRectangle(mesh, left, bottom + radius, radius, height - 2 * radius);
+    CreateRectangle(mesh, left + width - radius, bottom + radius, radius, height - 2 * radius);
+
+    auto createQuarterCircle = [&](const glm::vec2& center, float startAngle)
+        {
+            const float step = glm::half_pi<float>() / static_cast<float>(nrOfSegments);
+
+            for (int i = 0; i < nrOfSegments; ++i)
+            {
+                const float theta1 = startAngle + i * step;
+                const float theta2 = startAngle + (i + 1) * step;
+
+                const glm::vec2 p1 = center + glm::vec2(radius * cos(theta1), radius * sin(theta1));
+                const glm::vec2 p2 = center + glm::vec2(radius * cos(theta2), radius * sin(theta2));
+
+                mesh->AddVertex(Vertex2D{ center, { 1.0f, 0.0f, 0.0f } });
+                mesh->AddVertex(Vertex2D{ p1, { 0.0f, 0.0f, 1.0f } });
+                mesh->AddVertex(Vertex2D{ p2, { 0.0f, 0.0f, 1.0f } });
+            }
+        };
+
+    createQuarterCircle({ left + radius, bottom + radius }, glm::pi<float>());                          // Top-left corner
+    createQuarterCircle({ left + width - radius, bottom + radius }, -glm::half_pi<float>());            // Top-right corner
+    createQuarterCircle({ left + width - radius, bottom + height - radius }, 0.0f);                     // Bottom-right corner
+    createQuarterCircle({ left + radius, bottom + height - radius }, glm::half_pi<float>());            // Bottom-left corner
+}
+
 Vertex3D MeshLoader::CreateVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index)
 {
     Vertex3D vertex{};

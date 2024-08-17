@@ -1,5 +1,4 @@
 #pragma once
-//#include <vulkan/vulkan_core.h>
 #include "abstractions/DescriptorPool.h"
 #include "abstractions/DataBuffer.h"
 #include "textures/TextureManager.h"
@@ -12,10 +11,9 @@ class Mesh
 {
 public:
     Mesh() : m_TextureManager(m_DescriptorPool) {  };
-    //todo: pass by rvalue reference
-    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const std::vector<VertexType>& vertices, const std::vector<uint32_t>& indices)
-        : m_Vertices(vertices)
-        , m_Indices(indices)
+    explicit Mesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, std::vector<VertexType>&& vertices, std::vector<uint32_t>&& indices)
+        : m_Vertices{ std::move(vertices) }
+        , m_Indices{ std::move(indices) }
     {
         AllocateBuffer(commandPool, graphicsQueue, descriptorSetLayout);
     }
@@ -33,7 +31,6 @@ public:
 
     TextureManager& GetTextureManager() { return m_TextureManager; }
 
-    //virtual void AddVertex(const glm::vec2& pos, const glm::vec3& color = { 1, 1, 1 }) = 0;
     void AddVertex(const VertexType& vertex);
     void AllocateBuffer(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
     void BindBuffers(const VkCommandBuffer& commandBuffer) const;

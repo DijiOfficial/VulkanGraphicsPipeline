@@ -65,7 +65,6 @@ void InputManager::MouseMove(GLFWwindow* window, double xpos, double ypos)
 		const float dy = m_DragStart.y - static_cast<float>(ypos);
 		
 		m_MouseMouvementVec = { dx, dy };
-		//std::cout << "dx: " << dx << " dy: " << dy << std::endl;
 	}
 
 	m_DragStart = { xpos, ypos };

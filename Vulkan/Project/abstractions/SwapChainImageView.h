@@ -10,6 +10,6 @@ struct SwapChainImageView final
 
     void CreateImageViews();
 
-    //maybe no need for static if I can pass it to texture somehow
+    //maybe no need for static if I can pass it to texture
     static VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 };

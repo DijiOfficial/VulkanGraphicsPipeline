@@ -46,14 +46,6 @@ void Mesh<VertexType>::Draw(const VkCommandBuffer& commandBuffer, const VkPipeli
 		&m_HasNormalMap // Pointer to the data
 		);
 
-	//vkCmdPushConstants(
-	//	m_CommandBuffer.GetVkCommandBuffer(), m_3DGraphicsPipeline.GetPipelineLayout(),
-	//	VK_SHADER_STAGE_FRAGMENT_BIT, // Stage flag should match the push constant range in the layout
-	//	12, // Offset within the push constant block
-	//	sizeof(int), // Size of the push constants to update
-	//	&test // Pointer to the data
-	//);
-
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_DescriptorPool.GetDescriptorSets(currentFrame), 0, nullptr);
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 }

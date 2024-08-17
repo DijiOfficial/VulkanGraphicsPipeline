@@ -7,8 +7,9 @@
 #include "abstractions/Handles.h"
 #include "core/Camera.h"
 #include "core/TimeSingleton.h"
-#include <chrono>
 #include "core/RenderMode.h"
+#include "core/Scene.h"
+#include <chrono>
 
 class VulkanBase {
 public:
@@ -57,6 +58,7 @@ private:
 	Handles m_Handles{};
 	Camera m_Camera{};
 	RenderOptions m_RenderMode{};
+	Scene m_Scene{};
 
 	void InitWindow();
 	void DrawFrame(uint32_t imageIndex);

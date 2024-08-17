@@ -17,7 +17,6 @@ public:
 
     void CreateDepthResources(const VkExtent2D& swapChainExtent);
     
-    //VkImage GetDepthImage() { return depthImage; }
     VkImageView GetDepthImageView() const { return m_DepthImageView; }
     VkFormat FindDepthFormat();
 
