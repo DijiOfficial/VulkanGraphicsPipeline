@@ -23,10 +23,23 @@ void Mesh<VertexType>::Destroy()
 template<typename VertexType>
 void Mesh<VertexType>::Update(uint32_t currentFrame, UniformBufferObject ubo)
 {
-	const float time = diji::TimeSingleton::GetInstance().GetDeltaTime();
-	m_ElapsedTime += time;
-	//todo: create Rotation class?
-	ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(m_ElapsedTime * 90.0f), Camera::UP);
+	if (std::is_same<VertexType, Vertex2D>::value)
+	{
+		ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(m_RotationAngle), Camera::UP);
+	}
+	else
+	{
+		const float time = diji::TimeSingleton::GetInstance().GetDeltaTime();
+		m_ElapsedTime += time;
+
+		// Apply rotation around the UP vector over time
+		glm::mat4 rotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_ElapsedTime * 90.0f), Camera::UP);
+		if (!m_Rotate)
+		{
+			rotationMatrix = m_RotationMatrix;
+		}
+		ubo.model = m_ScaleMatrix * rotationMatrix * m_TranslationMatrix;
+	}
 
 	m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
 }

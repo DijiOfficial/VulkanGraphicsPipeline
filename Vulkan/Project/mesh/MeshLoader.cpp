@@ -166,25 +166,43 @@ void MeshLoader::CreateCircle(Mesh<Vertex2D>* mesh, const glm::vec2& center, flo
     }
 }
 
-void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color)
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size)
 {
-    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, size.x, size.y, color);
+    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, size.x, size.y);
 }
 
-void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color)
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, float width, float height)
 {
-    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, width, height, color);
+    CreateRectangle(mesh, bottomLeft.x, bottomLeft.y, width, height);
 }
 
-void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color)
+void MeshLoader::CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height)
 {
-    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f } });
-    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
-    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
+    Vertex2D vertex0{ glm::vec2(left, bottom + height), { 1.0f, 0.0f, 0.0f } };
+    Vertex2D vertex1{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } };
+    Vertex2D vertex2{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } };
+                 
+    Vertex2D vertex3{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } };
+    Vertex2D vertex4{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } };
+    Vertex2D vertex5{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } };
 
-    mesh->AddVertex(Vertex2D{ glm::vec2(left, bottom), { 0.0f, 1.0f, 0.0f } });
-    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom), { 1.0f, 0.0f, 0.0f } });
-    mesh->AddVertex(Vertex2D{ glm::vec2(left + width, bottom + height), { 0.0f, 0.0f, 1.0f } });
+    if (mesh->HasTexture())
+    {
+		vertex0.m_TexCoord = { 0.0f, 1.0f };
+		vertex1.m_TexCoord = { 0.0f, 0.0f };
+		vertex2.m_TexCoord = { 1.0f, 1.0f };
+		vertex3.m_TexCoord = { 0.0f, 0.0f };
+		vertex4.m_TexCoord = { 1.0f, 0.0f };
+		vertex5.m_TexCoord = { 1.0f, 1.0f };
+    }
+
+    mesh->AddVertex(vertex0);
+    mesh->AddVertex(vertex1);
+    mesh->AddVertex(vertex2);
+                    
+    mesh->AddVertex(vertex3);
+    mesh->AddVertex(vertex4);
+    mesh->AddVertex(vertex5);
 }
 
 void MeshLoader::CreateRoundedRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments)

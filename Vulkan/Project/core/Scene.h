@@ -21,6 +21,7 @@ public:
 
     void Draw2DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
     void Draw3DMeshes(VkCommandBuffer const& commandBuffer, const VkPipelineLayout& pipelineLayout, uint32_t currentFrame) const;
+
 private:
     std::vector<std::unique_ptr<Mesh<Vertex2D>>> m_Meshes2D;
     std::vector<std::unique_ptr<Mesh<Vertex3D>>> m_Meshes3D;

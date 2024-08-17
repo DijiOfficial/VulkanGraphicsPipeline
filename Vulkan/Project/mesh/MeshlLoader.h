@@ -25,9 +25,9 @@ public:
 
     void CreateCircle(Mesh<Vertex2D>* mesh, const glm::vec2& center, float r1, float r2, int nrOfSegments);
 
-    void CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    void CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
-    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, const glm::vec3& color = { 1.f, 1.f, 1.f });
+    void CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size);
+    void CreateRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, float width, float height);
+    void CreateRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height);
 
     void CreateRoundedRectangle(Mesh<Vertex2D>* mesh, const glm::vec2& bottomLeft, const glm::vec2& size, float radius, int nrOfSegments);
     void CreateRoundedRectangle(Mesh<Vertex2D>* mesh, float left, float bottom, float width, float height, float radius, int nrOfSegments);

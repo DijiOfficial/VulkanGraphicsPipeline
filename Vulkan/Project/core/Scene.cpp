@@ -7,52 +7,22 @@
 void Scene::Init(const VkCommandPool& commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const glm::mat4& projectionMatrix, float aspectRatio)
 {
     m_3DUniformBufferObject.proj = projectionMatrix;
+    m_3DUniformBufferObject.model = glm::rotate(glm::mat4(1.0f), glm::radians(180.f), Camera::UP);
 
     m_2DUniformBufferObject.model = glm::mat4(1.f);
-    //m_2DUniformBufferObject.view = glm::mat4(1.f);
-    //m_2DUniformBufferObject.proj = glm::mat4(1.f);
-    m_2DUniformBufferObject.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    m_2DUniformBufferObject.proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 10.0f);
-    m_2DUniformBufferObject.proj[1][1] *= -1;
+    m_2DUniformBufferObject.view = glm::mat4(1.f);
+    m_2DUniformBufferObject.proj = glm::mat4(1.f);
+
+    //m_2DUniformBufferObject.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //m_2DUniformBufferObject.proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 10.0f);
+    //m_2DUniformBufferObject.proj[1][1] *= -1;
 
     m_GraphicsQueue = graphicsQueue;
     m_CommandPool = commandPool;
     m_DescriptorSetLayout = descriptorSetLayout;
-	//LevelParser::ParseLevel(m_3DMeshes, m_2DMeshes, commandPool, "resources/level.json");
-    //for (auto& mesh : m_2DMeshes)
-    //{
-    //    mesh->MapBuffers();
-    //    mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
-    //}
+	
+
     //CreateRectangle({-1.f, -1.f} , 2 , 2);
-
-    const std::vector<Vertex3D> vertices = {
-    {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-    };
-
-    const std::vector<uint32_t> indices = {
-    0, 1, 2, 2, 3, 0,
-    4, 5, 6, 6, 7, 4
-    };
-
-    const std::vector<Vertex2D> vertices2 = {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
-    };
-    const std::vector<uint32_t> indices2 = { 0, 1, 2, 2, 3, 0 };
-
-    //m_Meshes2D.push_back(std::make_unique<Mesh<Vertex2D>>(commandPool, graphicsQueue, descriptorSetLayout, vertices2, indices2));
-    //m_Meshes3D.push_back(std::make_unique<Mesh<Vertex3D>>(commandPool, graphicsQueue, m_3DDescriptorSetLayout, vertices, indices));
 
     //CreateCircle({0.0f, 0.0f}, 0.5f, 0.5f, 32);
     //CreateRoundedRectangle(-0.5f,-0.5f, 1.0f, 1.0f, 0.1f, 8);
@@ -131,13 +101,32 @@ void Scene::LoadScene()
         std::string shape = meshData["shape"];
         if (type == "2D")
         {
-            continue;
-			//auto& mesh2D = AddMesh<Vertex2D>();
-   //         for (const auto& vertex : mesh["vertices"])
-   //         {
-			//	mesh2D.AddVertex(Vertex2D{ { vertex["position"][0], vertex["position"][1] }, { vertex["color"][0], vertex["color"][1], vertex["color"][2] } });
-			//}
-			//mesh2D.AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
+            const auto& mesh = AddMesh<Vertex2D>();
+            if (shape == "rectangle")
+            {
+                if (meshData.contains("texture"))
+                {
+                    mesh->GetTextureManager().UploadAlbedoTexture(m_GraphicsQueue, m_CommandPool, meshData["texture"]);
+                    mesh->SetHasTexture();
+				}
+                m_MeshLoader.CreateRectangle(mesh, glm::vec2{ meshData["position"][0], meshData["position"][1] }, meshData["size"][0], meshData["size"][1]);
+                mesh->SetRotationAngle(179.9f);
+			}
+            else if (shape == "oval")
+            {
+				m_MeshLoader.CreateCircle(mesh, glm::vec2{ meshData["position"][0], meshData["position"][1] }, meshData["radius"][0], meshData["radius"][1], meshData["segments"]);
+                mesh->SetRotationAngle(179.9f);
+            }
+            else if (shape == "roundedRectangle")
+            {
+                m_MeshLoader.CreateRoundedRectangle(mesh, glm::vec2{ meshData["position"][0], meshData["position"][1] }, glm::vec2{ meshData["size"][0], meshData["size"][1] }, meshData["radius"], meshData["segments"]);
+                mesh->SetRotationAngle(180.1f);
+            }
+            else
+            {
+                throw std::runtime_error("failed to load 2D data shape! " + shape);
+            }
+            mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_DescriptorSetLayout);
 		}
         else if (type == "3D")
         {
@@ -170,8 +159,27 @@ void Scene::LoadScene()
                     if (meshData["textures"].contains("specular"))
                         mesh->GetTextureManager().UploadSpecularTexture(m_GraphicsQueue, m_CommandPool, meshData["textures"]["specular"]);
                 }
+
+                mesh->Translate(glm::vec3{ meshData["position"][0], meshData["position"][1], meshData["position"][2] });
+                
+                if (meshData.contains("scale"))
+                    mesh->SetScale(glm::vec3{ meshData["scale"][0], meshData["scale"][1], meshData["scale"][2] });
+
+                if (meshData.contains("rotation"))
+                {
+                    mesh->Rotate({ meshData["rotation"][0], meshData["rotation"][1], meshData["rotation"][2] });
+                    mesh->DisableRotation();
+                }
             }
+            else
+            {
+				throw std::runtime_error("failed to load 3D data shape! " + shape);
+			}
             mesh->AllocateBuffer(m_CommandPool, m_GraphicsQueue, m_3DDescriptorSetLayout);
+		}
+        else
+        {
+			throw std::runtime_error("failed to load data type! " + type);
 		}
 	}
 }
